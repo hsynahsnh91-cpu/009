@@ -1,41 +1,6 @@
 :root {
-  --color-primary: #0D9488;
-  --color-primary-hover: #0F766E;
-  --color-primary-light: #CCFBF1;
-  --color-secondary: #14B8A6;
-  --color-accent: #EA580C;
-  --color-accent-hover: #C2410C;
-  --color-gold: #D97706;
-  --color-background: #F4FBF9;
-  --color-surface: #FFFFFF;
-  --color-surface-muted: #ECF6F4;
-  --color-foreground: #0F2926;
-  --color-muted-foreground: #475569;
-  --color-border: #CBD5E1;
-  --color-border-teal: #99F6E4;
-  --color-ring: #0D9488;
-  --color-success: #059669;
-  --color-warning: #D97706;
-  --color-destructive: #DC2626;
   --font-sans: 'Cairo', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
-}
-
-html.dark {
-  --color-primary: #14B8A6;
-  --color-primary-hover: #2DD4BF;
-  --color-primary-light: #113432;
-  --color-secondary: #0D9488;
-  --color-accent: #F97316;
-  --color-accent-hover: #FB923C;
-  --color-gold: #F59E0B;
-  --color-background: #0B131E;
-  --color-surface: #131F31;
-  --color-surface-muted: #1A2940;
-  --color-foreground: #F8FAFC;
-  --color-muted-foreground: #94A3B8;
-  --color-border: #263854;
-  --color-border-teal: #1E4E4A;
   --color-ring: #14B8A6;
 }
 
@@ -45,13 +10,18 @@ html.dark {
 
 body {
   font-family: var(--font-sans);
-  background-color: var(--color-background);
-  color: var(--color-foreground);
   margin: 0;
   padding: 0;
-  line-height: 1.6;
+  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
-  transition: background-color 180ms ease, color 180ms ease;
+  background-color: #060D18;
+  color: #F8FAFC;
+  transition: background-color 300ms ease, color 300ms ease;
+}
+
+html:not(.dark) body {
+  background-color: #F0FAF8;
+  color: #0F172A;
 }
 
 .font-mono-num {
@@ -60,66 +30,243 @@ body {
   display: inline-block;
 }
 
-/* Damascus Subtle Geometric Header Banner Pattern */
-.damascus-pattern {
-  background-color: #0B4F4A;
-  background-image: radial-gradient(rgba(20, 184, 166, 0.16) 1.5px, transparent 1.5px),
-    radial-gradient(rgba(234, 88, 12, 0.12) 1.5px, #0B4F4A 1.5px);
-  background-size: 28px 28px;
-  background-position: 0 0, 14px 14px;
+/* ==========================================================================
+   ANIMATED BACKGROUND ENGINE (AURORA MESH + INTERACTIVE CANVAS + GRID)
+   ========================================================================== */
+.animated-bg-stage {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background: radial-gradient(circle at 15% 15%, rgba(13, 148, 136, 0.22), transparent 45%),
+              radial-gradient(circle at 85% 20%, rgba(245, 158, 11, 0.16), transparent 45%),
+              radial-gradient(circle at 50% 85%, rgba(6, 182, 212, 0.18), transparent 50%),
+              linear-gradient(160deg, #040911 0%, #091526 50%, #06121E 100%);
 }
 
-html.dark .damascus-pattern {
-  background-color: #092228;
-  background-image: radial-gradient(rgba(20, 184, 166, 0.14) 1.5px, transparent 1.5px),
-    radial-gradient(rgba(245, 158, 11, 0.1) 1.5px, #092228 1.5px);
+html:not(.dark) .animated-bg-stage {
+  background: radial-gradient(circle at 15% 15%, rgba(20, 184, 166, 0.22), transparent 45%),
+              radial-gradient(circle at 85% 20%, rgba(251, 146, 60, 0.18), transparent 45%),
+              radial-gradient(circle at 50% 85%, rgba(14, 165, 233, 0.16), transparent 50%),
+              linear-gradient(160deg, #ECFEFF 0%, #F0FDFA 50%, #F8FAFC 100%);
 }
 
-/* Visible Focus States per UI/UX Pro Max Guidelines */
+.aurora-blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(85px);
+  opacity: 0.55;
+  will-change: transform;
+}
+
+html:not(.dark) .aurora-blob {
+  opacity: 0.42;
+  filter: blur(95px);
+}
+
+.aurora-blob-1 {
+  width: 520px;
+  height: 520px;
+  top: -120px;
+  right: -80px;
+  background: radial-gradient(circle, #0D9488 0%, #06B6D4 65%, transparent 100%);
+  animation: auroraFloat1 14s ease-in-out infinite alternate;
+}
+
+.aurora-blob-2 {
+  width: 460px;
+  height: 460px;
+  bottom: -140px;
+  left: -90px;
+  background: radial-gradient(circle, #F59E0B 0%, #EA580C 65%, transparent 100%);
+  animation: auroraFloat2 17s ease-in-out infinite alternate;
+}
+
+.aurora-blob-3 {
+  width: 420px;
+  height: 420px;
+  top: 38%;
+  left: 32%;
+  background: radial-gradient(circle, #10B981 0%, #3B82F6 70%, transparent 100%);
+  animation: auroraFloat3 19s ease-in-out infinite alternate;
+}
+
+@keyframes auroraFloat1 {
+  0% { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
+  50% { transform: translate3d(-90px, 70px, 0) scale(1.14) rotate(12deg); }
+  100% { transform: translate3d(50px, 120px, 0) scale(0.92) rotate(-8deg); }
+}
+
+@keyframes auroraFloat2 {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(110px, -80px, 0) scale(1.18); }
+  100% { transform: translate3d(-40px, -110px, 0) scale(0.94); }
+}
+
+@keyframes auroraFloat3 {
+  0% { transform: translate3d(0, 0, 0) scale(0.95); }
+  50% { transform: translate3d(-75px, -65px, 0) scale(1.12); }
+  100% { transform: translate3d(85px, 55px, 0) scale(1.03); }
+}
+
+/* Subtle Architectural Grid Overlay */
+.bg-grid-overlay {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(20, 184, 166, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(20, 184, 166, 0.06) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(ellipse at center, black 45%, transparent 90%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 45%, transparent 90%);
+}
+
+/* ==========================================================================
+   LIQUID GLASS & BENTO SURFACES
+   ========================================================================== */
+.glass-panel {
+  background: rgba(15, 25, 42, 0.68);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.45),
+              inset 0 1px 0 0 rgba(255, 255, 255, 0.12);
+}
+
+html:not(.dark) .glass-panel {
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(13, 148, 136, 0.18);
+  box-shadow: 0 16px 40px -15px rgba(13, 148, 136, 0.12),
+              inset 0 1px 0 0 rgba(255, 255, 255, 0.9);
+}
+
+.glass-card {
+  background: rgba(20, 33, 54, 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 220ms ease,
+              box-shadow 220ms ease;
+}
+
+html:not(.dark) .glass-card {
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(15, 118, 110, 0.16);
+  box-shadow: 0 8px 24px -8px rgba(15, 23, 42, 0.06);
+}
+
+.glass-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(20, 184, 166, 0.55);
+  box-shadow: 0 16px 36px -10px rgba(13, 148, 136, 0.25);
+}
+
+.glass-input {
+  background: rgba(9, 16, 29, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #F8FAFC;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+html:not(.dark) .glass-input {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  color: #0F172A;
+}
+
+.glass-input:focus {
+  border-color: #14B8A6;
+  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.22);
+  outline: none;
+}
+
+/* Shimmer Animated Gradient CTA Button */
+.btn-aurora {
+  background: linear-gradient(135deg, #0D9488 0%, #0EA5E9 50%, #10B981 100%);
+  background-size: 200% 200%;
+  animation: gradientShift 5s ease infinite;
+  color: #ffffff;
+  box-shadow: 0 10px 25px -5px rgba(13, 148, 136, 0.5);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.btn-aurora:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px -5px rgba(13, 148, 136, 0.68);
+}
+
+.btn-gold {
+  background: linear-gradient(135deg, #EA580C 0%, #F59E0B 100%);
+  color: #ffffff;
+  box-shadow: 0 10px 25px -5px rgba(234, 88, 12, 0.45);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.btn-gold:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px -5px rgba(234, 88, 12, 0.65);
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes cardReveal {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-reveal {
+  animation: cardReveal 280ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Visible Keyboard Focus */
 button:focus-visible,
 a:focus-visible,
 input:focus-visible,
 select:focus-visible,
-textarea:focus-visible,
-[tabindex]:focus-visible {
+textarea:focus-visible {
   outline: 2px solid var(--color-ring);
   outline-offset: 2px;
 }
 
-/* Interactive transitions */
-.interactive-card {
-  transition: transform 160ms ease, border-color 160ms ease, background-color 160ms ease;
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
 }
-
-.interactive-card:hover {
-  border-color: var(--color-primary);
-}
-
-/* Kanban column scrollbars */
-.kanban-col::-webkit-scrollbar {
-  width: 6px;
-}
-.kanban-col::-webkit-scrollbar-track {
+::-webkit-scrollbar-track {
   background: transparent;
 }
-.kanban-col::-webkit-scrollbar-thumb {
-  background: rgba(13, 148, 136, 0.25);
+::-webkit-scrollbar-thumb {
+  background: rgba(20, 184, 166, 0.3);
   border-radius: 9999px;
 }
 
-/* Respect Reduced Motion */
+/* Pause animations when paused class is active or reduced motion is preferred */
+body.motion-paused .aurora-blob,
+body.motion-paused .btn-aurora {
+  animation-play-state: paused !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
   }
 }
 
-/* Print styles for Official Payment Receipt */
 @media print {
   body * {
     visibility: hidden;

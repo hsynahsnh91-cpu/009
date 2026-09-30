@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" class="scroll-smooth">
+<html lang="ar" dir="rtl" class="dark scroll-smooth">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>مَدار سوريا | منصة إدارة المهام والمشاريع والدفع الإلكتروني</title>
+  <title>مَدار سوريا | نظام إدارة المهام والمشاريع والدفع الإلكتروني</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -16,17 +16,6 @@
           fontFamily: {
             sans: ['Cairo', 'Plus Jakarta Sans', 'sans-serif'],
             mono: ['JetBrains Mono', 'monospace']
-          },
-          colors: {
-            teal: {
-              50: '#F0FDFA',
-              100: '#CCFBF1',
-              500: '#14B8A6',
-              600: '#0D9488',
-              700: '#0F766E',
-              800: '#115E59',
-              900: '#134E4A'
-            }
           }
         }
       }
@@ -34,265 +23,219 @@
   </script>
   <link rel="stylesheet" href="/styles.css" />
 </head>
-<body class="min-h-screen flex flex-col selection:bg-teal-600 selection:text-white">
+<body class="min-h-screen flex flex-col relative selection:bg-teal-500 selection:text-white">
 
-  <!-- Top Damascus Geometric Utility Bar -->
-  <div class="damascus-pattern text-white text-xs py-2 px-4 border-b border-teal-800/60 no-print">
+  <!-- ===================================================================== -->
+  <!-- MULTI-LAYER INTERACTIVE ANIMATED BACKGROUND                           -->
+  <!-- ===================================================================== -->
+  <div class="animated-bg-stage no-print" aria-hidden="true">
+    <div class="aurora-blob aurora-blob-1"></div>
+    <div class="aurora-blob aurora-blob-2"></div>
+    <div class="aurora-blob aurora-blob-3"></div>
+    <div class="bg-grid-overlay"></div>
+    <canvas id="animated-bg-canvas" class="absolute inset-0 w-full h-full"></canvas>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- TOP UTILITY & ANIMATED BACKGROUND CONTROLLER BAR                      -->
+  <!-- ===================================================================== -->
+  <div class="relative z-20 border-b border-white/10 bg-slate-950/60 backdrop-blur-md text-xs py-2 px-4 no-print">
     <div class="max-w-[1440px] mx-auto flex flex-wrap items-center justify-between gap-3">
-      <div class="flex items-center gap-3">
-        <span class="inline-flex items-center gap-1.5 bg-teal-500/20 border border-teal-400/30 text-teal-100 px-2.5 py-0.5 rounded-full font-semibold">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          بوابات الدفع السورية متصلة (سيريتل كاش • شام كاش • إم تي إن • بيمو • الهرم)
+      <!-- Left: Workspace Identity & Live Status -->
+      <div class="flex flex-wrap items-center gap-3">
+        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/15 border border-teal-400/30 text-teal-300 font-bold">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+          <span id="top-workspace-badge">تطبيق إنتاجي حقيقي • قاعدة بيانات نظيفة 100%</span>
         </span>
-        <span class="hidden md:inline text-teal-200/90">تغطية شاملة لجميع المحافظات السورية • دعم العمل دون اتصال (Offline-Ready)</span>
+
+        <!-- Animated Background Mode Switcher -->
+        <div class="inline-flex items-center gap-1 bg-slate-900/80 border border-white/10 rounded-xl p-1" role="group" aria-label="نمط الخلفية المتحركة">
+          <span class="text-[11px] text-slate-400 px-2 font-semibold">الخلفية المتحركة:</span>
+          <button type="button" data-bgmode="aurora" class="bg-mode-btn cursor-pointer px-2.5 py-0.5 rounded-lg font-bold transition-colors bg-teal-600 text-white">شفق دمشق</button>
+          <button type="button" data-bgmode="waves" class="bg-mode-btn cursor-pointer px-2.5 py-0.5 rounded-lg font-bold transition-colors text-slate-300 hover:text-white">أمواج بلورية</button>
+          <button type="button" data-bgmode="geometry" class="bg-mode-btn cursor-pointer px-2.5 py-0.5 rounded-lg font-bold transition-colors text-slate-300 hover:text-white">هندسة دمشقية</button>
+          <button type="button" id="toggle-motion-btn" class="cursor-pointer px-2 py-0.5 rounded-lg text-amber-300 hover:bg-white/10 font-semibold" title="إيقاف أو تشغيل حركة الخلفية">إيقاف الحركة</button>
+        </div>
       </div>
 
-      <div class="flex items-center gap-3">
-        <!-- Live Exchange Rate Control -->
-        <div class="flex items-center gap-1.5 bg-slate-900/50 border border-teal-500/30 rounded-lg px-2.5 py-1">
-          <svg class="w-3.5 h-3.5 text-amber-400 shrink-0" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <label for="exchange-rate-input" class="text-teal-100">سعر الصرف (1$):</label>
+      <!-- Right: Exchange Rate & Currency Switcher + Backup -->
+      <div class="flex flex-wrap items-center gap-3">
+        <!-- Live Exchange Rate -->
+        <div class="flex items-center gap-1.5 bg-slate-900/80 border border-white/10 rounded-xl px-3 py-1">
+          <label for="exchange-rate-input" class="text-slate-300 font-semibold">سعر الصرف (1$):</label>
           <input
             id="exchange-rate-input"
             type="number"
-            min="1000"
+            min="1"
             step="100"
             value="15000"
-            class="w-20 bg-transparent text-amber-300 font-mono-num font-bold text-xs border-b border-teal-400/50 focus:border-amber-400 px-1 text-center"
-            aria-label="سعر صرف الدولار مقابل الليرة السورية"
+            class="w-20 bg-transparent text-amber-400 font-mono-num font-extrabold text-xs border-b border-teal-500/50 focus:border-amber-400 text-center"
           />
-          <span class="text-teal-200">ل.س</span>
+          <span class="text-slate-400">ل.س</span>
         </div>
 
-        <!-- Currency Display Mode Switcher -->
-        <div class="inline-flex rounded-lg bg-slate-900/50 p-0.5 border border-teal-500/30" role="group" aria-label="عملة العرض">
-          <button type="button" data-currency="SYP" class="currency-btn cursor-pointer px-2.5 py-0.5 rounded-md font-semibold transition-colors bg-teal-600 text-white">ل.س SYP</button>
-          <button type="button" data-currency="USD" class="currency-btn cursor-pointer px-2.5 py-0.5 rounded-md font-semibold transition-colors text-teal-100 hover:text-white">$ USD</button>
-          <button type="button" data-currency="BOTH" class="currency-btn cursor-pointer px-2.5 py-0.5 rounded-md font-semibold transition-colors text-teal-100 hover:text-white">مزدوج</button>
+        <!-- Currency Display Mode -->
+        <div class="inline-flex rounded-xl bg-slate-900/80 p-0.5 border border-white/10" role="group" aria-label="عملة العرض">
+          <button type="button" data-currency="SYP" class="currency-btn cursor-pointer px-2.5 py-1 rounded-lg font-bold transition-colors bg-teal-600 text-white">ل.س SYP</button>
+          <button type="button" data-currency="USD" class="currency-btn cursor-pointer px-2.5 py-1 rounded-lg font-bold transition-colors text-slate-300 hover:text-white">$ USD</button>
+          <button type="button" data-currency="BOTH" class="currency-btn cursor-pointer px-2.5 py-1 rounded-lg font-bold transition-colors text-slate-300 hover:text-white">مزدوج</button>
+        </div>
+
+        <!-- Export JSON Backup & Download ZIP -->
+        <div class="flex items-center gap-1.5">
+          <a
+            href="/api/export"
+            class="cursor-pointer inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-white/10 hover:bg-white/20 text-slate-200 font-bold transition-colors"
+            title="تصدير نسخة احتياطية من بياناتك الحقيقية (JSON)"
+          >
+            <svg class="w-3.5 h-3.5 text-teal-400" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+            </svg>
+            <span>نسخة احتياطية</span>
+          </a>
+
+          <a
+            href="/madar-syria-project.zip"
+            download="madar-syria-project.zip"
+            class="cursor-pointer inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-teal-600/30 border border-teal-400/40 hover:bg-teal-600/50 text-teal-200 font-bold transition-colors"
+          >
+            <svg class="w-3.5 h-3.5" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            <span>تحميل المشروع (ZIP)</span>
+          </a>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Main Header -->
-  <header class="sticky top-0 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 no-print">
+  <!-- ===================================================================== -->
+  <!-- MAIN GLASSMORPHIC NAVIGATION HEADER                                   -->
+  <!-- ===================================================================== -->
+  <header class="sticky top-0 z-30 glass-panel border-x-0 border-t-0 no-print">
     <div class="max-w-[1440px] mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-4">
-      <!-- Brand Logo & Title -->
-      <div class="flex items-center gap-3">
-        <div class="w-11 h-11 rounded-xl bg-teal-600 flex items-center justify-center text-white shadow-sm border border-teal-500 shrink-0">
-          <!-- Geometric Star / Check SVG Icon -->
+      <!-- Brand Identity -->
+      <div class="flex items-center gap-3.5">
+        <div class="w-12 h-12 rounded-2xl btn-aurora flex items-center justify-center text-white shrink-0">
           <svg class="w-6 h-6" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
           </svg>
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <h1 class="text-xl font-extrabold tracking-tight text-slate-900 dark:text-white">مَدار سوريا</h1>
-            <span class="text-xs font-bold px-2 py-0.5 rounded-md bg-teal-100 dark:bg-teal-900/60 text-teal-800 dark:text-teal-200 border border-teal-300 dark:border-teal-700">PRO MAX</span>
+            <h1 id="header-workspace-title" class="text-xl font-black tracking-tight">مَدار سوريا</h1>
+            <button
+              type="button"
+              id="open-workspace-modal-btn"
+              class="cursor-pointer text-xs font-bold px-2.5 py-0.5 rounded-lg bg-teal-500/15 hover:bg-teal-500/25 text-teal-400 border border-teal-500/30 transition-colors"
+              title="تعديل اسم شركتك أو مساحة العمل"
+            >
+              إعداد مساحة العمل ✎
+            </button>
           </div>
-          <p class="text-xs text-slate-600 dark:text-slate-400">نظام إدارة المهام والمشاريع والدفع الإلكتروني في الجمهورية العربية السورية</p>
+          <p id="header-workspace-subtitle" class="text-xs text-slate-400">منصة إدارة المهام والمشاريع والدفع الإلكتروني في سوريا</p>
         </div>
       </div>
 
-      <!-- Navigation Tabs -->
-      <nav class="flex items-center gap-1 bg-slate-100 dark:bg-slate-800/90 p-1 rounded-xl border border-slate-200/80 dark:border-slate-700 overflow-x-auto max-w-full" aria-label="التنقل الرئيسي">
-        <button type="button" data-tab="board" class="nav-tab cursor-pointer flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-bold transition-colors bg-teal-600 text-white">
+      <!-- Navigation Pills -->
+      <nav class="flex items-center gap-1.5 bg-slate-950/40 dark:bg-slate-950/50 p-1.5 rounded-2xl border border-white/10 overflow-x-auto max-w-full" aria-label="التنقل الرئيسي">
+        <button type="button" data-tab="board" class="nav-tab cursor-pointer flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all btn-aurora text-white">
           <svg class="w-4 h-4 shrink-0" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
           </svg>
-          <span>إدارة المهام</span>
+          <span>لوحة المهام</span>
+          <span id="nav-tasks-count" class="px-1.5 py-0.2 text-[11px] rounded-full bg-black/25 font-mono-num">0</span>
         </button>
 
-        <button type="button" data-tab="payments" class="nav-tab cursor-pointer flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-bold transition-colors text-slate-700 dark:text-slate-200 hover:bg-white/60 dark:hover:bg-slate-700">
+        <button type="button" data-tab="projects" class="nav-tab cursor-pointer flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all text-slate-300 hover:text-white hover:bg-white/5">
+          <svg class="w-4 h-4 shrink-0" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+          </svg>
+          <span>المشاريع والأداء</span>
+          <span id="nav-projects-count" class="px-1.5 py-0.2 text-[11px] rounded-full bg-white/10 font-mono-num">0</span>
+        </button>
+
+        <button type="button" data-tab="payments" class="nav-tab cursor-pointer flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all text-slate-300 hover:text-white hover:bg-white/5">
           <svg class="w-4 h-4 shrink-0" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
           </svg>
           <span>بوابة الدفع والمحفظة</span>
-          <span class="px-1.5 py-0.2 text-[11px] rounded-full bg-orange-600 text-white font-semibold">سوريا</span>
         </button>
 
-        <button type="button" data-tab="analytics" class="nav-tab cursor-pointer flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-bold transition-colors text-slate-700 dark:text-slate-200 hover:bg-white/60 dark:hover:bg-slate-700">
-          <svg class="w-4 h-4 shrink-0" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-          </svg>
-          <span>التقارير والأداء</span>
-        </button>
-
-        <button type="button" data-tab="team" class="nav-tab cursor-pointer flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-bold transition-colors text-slate-700 dark:text-slate-200 hover:bg-white/60 dark:hover:bg-slate-700">
+        <button type="button" data-tab="team" class="nav-tab cursor-pointer flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all text-slate-300 hover:text-white hover:bg-white/5">
           <svg class="w-4 h-4 shrink-0" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
           </svg>
-          <span>الفريق والمحافظات</span>
+          <span>الفريق والمستقلون</span>
+          <span id="nav-team-count" class="px-1.5 py-0.2 text-[11px] rounded-full bg-white/10 font-mono-num">0</span>
         </button>
 
-        <button type="button" data-tab="plans" class="nav-tab cursor-pointer flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-bold transition-colors text-slate-700 dark:text-slate-200 hover:bg-white/60 dark:hover:bg-slate-700">
+        <button type="button" data-tab="gateways" class="nav-tab cursor-pointer flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all text-slate-300 hover:text-white hover:bg-white/5">
           <svg class="w-4 h-4 shrink-0" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
           </svg>
-          <span>باقات الاشتراك</span>
+          <span>إعدادات حسابات الدفع</span>
         </button>
       </nav>
 
-      <!-- Right Action Controls -->
+      <!-- Action Buttons -->
       <div class="flex items-center gap-2.5">
-        <!-- Quick Wallet Summary Pill -->
-        <button
-          type="button"
-          id="header-wallet-btn"
-          class="cursor-pointer hidden xl:flex items-center gap-2.5 bg-teal-50 dark:bg-slate-800 border border-teal-200 dark:border-teal-800 px-3.5 py-2 rounded-xl hover:border-teal-500 transition-colors"
-          title="انتقل إلى المحفظة الرقمية وبوابة الدفع"
-        >
-          <div class="w-8 h-8 rounded-lg bg-teal-600/10 text-teal-700 dark:text-teal-300 flex items-center justify-center">
-            <svg class="w-4 h-4" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-            </svg>
-          </div>
-          <div class="text-right">
-            <div class="text-[11px] text-slate-500 dark:text-slate-400 leading-none">رصيد المحفظة المتاح</div>
-            <div id="header-wallet-balance" class="text-sm font-extrabold text-teal-900 dark:text-teal-200 font-mono-num mt-0.5">24,750,000 ل.س</div>
-          </div>
-        </button>
-
-        <!-- Download Project ZIP Button -->
-        <a
-          href="/madar-syria-project.zip"
-          download="madar-syria-project.zip"
-          class="cursor-pointer inline-flex items-center gap-1.5 bg-teal-600 hover:bg-teal-700 text-white font-bold text-sm px-3.5 py-2.5 rounded-xl transition-colors"
-          title="تحميل كافة ملفات المشروع بصيغة ZIP"
-        >
-          <svg class="w-4 h-4" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-          </svg>
-          <span>تحميل المشروع (ZIP)</span>
-        </a>
-
-        <!-- New Task CTA Button -->
         <button
           type="button"
           id="open-new-task-btn"
-          class="cursor-pointer inline-flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white font-bold text-sm px-4 py-2.5 rounded-xl transition-colors"
+          class="cursor-pointer btn-gold font-extrabold text-sm px-4 py-2.5 rounded-xl inline-flex items-center gap-2"
         >
           <svg class="w-4 h-4" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
           </svg>
-          <span>مهمة جديدة</span>
+          <span>إضافة مهمة جديدة</span>
         </button>
 
-        <!-- Theme Toggle Button -->
         <button
           type="button"
           id="theme-toggle-btn"
-          class="cursor-pointer p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:border-teal-500 transition-colors"
+          class="cursor-pointer p-2.5 rounded-xl glass-card text-amber-300"
           aria-label="تبديل الوضع الليلي والنهاري"
           title="تبديل الوضع الليلي والنهاري"
         >
-          <svg id="theme-icon-sun" class="w-5 h-5 hidden dark:block text-amber-400" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <svg class="w-5 h-5" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-          </svg>
-          <svg id="theme-icon-moon" class="w-5 h-5 block dark:hidden text-slate-700" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
           </svg>
         </button>
       </div>
     </div>
   </header>
 
-  <!-- Toast Notification Banner -->
+  <!-- Toast Notification Container -->
   <div id="toast-container" class="fixed bottom-5 left-5 z-50 flex flex-col gap-2 max-w-md w-full pointer-events-none px-4 no-print" aria-live="polite"></div>
 
-  <!-- Main Workspace Container -->
-  <main class="flex-1 max-w-[1440px] w-full mx-auto px-4 sm:px-6 py-6 space-y-6 no-print">
+  <!-- ===================================================================== -->
+  <!-- MAIN WORKSPACE CONTENT                                                -->
+  <!-- ===================================================================== -->
+  <main class="relative z-10 flex-1 max-w-[1440px] w-full mx-auto px-4 sm:px-6 py-6 space-y-6 no-print">
 
-    <!-- Top KPI Summary Row (Always Visible Context) -->
-    <section aria-label="ملخص المؤشرات الرئيسية" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <!-- KPI 1: Tasks Completion -->
-      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 flex items-start justify-between">
-        <div class="space-y-1">
-          <span class="text-xs font-bold text-slate-500 dark:text-slate-400">إجمالي المهام النشطة والمكتملة</span>
-          <div class="flex items-baseline gap-2">
-            <span id="kpi-total-tasks" class="text-2xl font-extrabold text-slate-900 dark:text-white font-mono-num">8</span>
-            <span id="kpi-done-rate" class="text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300">25% مكتملة</span>
+    <!-- First-Time Real Workspace Setup Banner (Shown until user sets their workspace name) -->
+    <section id="onboarding-banner" class="glass-panel rounded-3xl p-6 border border-teal-400/30 relative overflow-hidden">
+      <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+        <div class="space-y-2 max-w-2xl">
+          <span class="inline-flex items-center gap-1.5 text-xs font-extrabold px-3 py-1 rounded-full bg-teal-500/20 text-teal-300 border border-teal-400/30">
+            مساحة عمل حقيقية خالية من أي بيانات وهمية
+          </span>
+          <h2 class="text-2xl font-black">أهلاً بك في منصتك الخاصة لإدارة المهام والدفع الإلكتروني في سوريا</h2>
+          <p class="text-sm text-slate-300 leading-relaxed">
+            التطبيق الآن مهيأ بالكامل للعمل الحقيقي: ابدأ بتسمية شركتك أو فريقك، ثم أضف مشاريعك الحقيقية، أعضاء فريقك، حساباتك في <strong>سيريتل كاش / شام كاش / إم تي إن كاش / بنك بيمو / الهرم</strong>، وأدر مهامك ومدفوعاتك الفعلية.
+          </p>
+        </div>
+
+        <form id="quick-workspace-form" class="w-full lg:w-auto flex flex-wrap sm:flex-nowrap items-end gap-3 bg-slate-950/50 p-4 rounded-2xl border border-white/10">
+          <div>
+            <label for="setup-ws-name" class="block text-xs font-bold text-slate-300 mb-1">اسم شركتك أو مساحة العمل *</label>
+            <input id="setup-ws-name" type="text" required placeholder="مثال: شركة النور للبرمجيات" class="glass-input px-3.5 py-2 rounded-xl text-sm w-full sm:w-52" />
           </div>
-          <p class="text-xs text-slate-600 dark:text-slate-400">موزعة على 4 مشاريع في 5 محافظات</p>
-        </div>
-        <div class="w-11 h-11 rounded-xl bg-teal-50 dark:bg-teal-950/70 border border-teal-200 dark:border-teal-800 flex items-center justify-center text-teal-600 dark:text-teal-400 shrink-0">
-          <svg class="w-6 h-6" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-          </svg>
-        </div>
-      </div>
-
-      <!-- KPI 2: Available Wallet Balance -->
-      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 flex items-start justify-between">
-        <div class="space-y-1">
-          <span class="text-xs font-bold text-slate-500 dark:text-slate-400">رصيد المحفظة الإلكترونية المتاح</span>
-          <div id="kpi-wallet-balance" class="text-xl font-extrabold text-teal-700 dark:text-teal-400 font-mono-num">24,750,000 ل.س</div>
-          <p id="kpi-wallet-usd" class="text-xs text-slate-600 dark:text-slate-400 font-mono-num">≈ $1,650.00 USD جاهز للصرف الفوري</p>
-        </div>
-        <div class="w-11 h-11 rounded-xl bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800 flex items-center justify-center text-amber-600 dark:text-amber-400 shrink-0">
-          <svg class="w-6 h-6" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-          </svg>
-        </div>
-      </div>
-
-      <!-- KPI 3: Escrow Reserved Balance -->
-      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 flex items-start justify-between">
-        <div class="space-y-1">
-          <span class="text-xs font-bold text-slate-500 dark:text-slate-400">مبالغ الضمان المحجوزة للمهام (Escrow)</span>
-          <div id="kpi-escrow-balance" class="text-xl font-extrabold text-slate-900 dark:text-white font-mono-num">8,250,000 ل.س</div>
-          <p class="text-xs text-slate-600 dark:text-slate-400">تُحرر تلقائياً للمستقلين عند اعتماد المهمة</p>
-        </div>
-        <div class="w-11 h-11 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 flex items-center justify-center text-blue-600 dark:text-blue-400 shrink-0">
-          <svg class="w-6 h-6" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-          </svg>
-        </div>
-      </div>
-
-      <!-- KPI 4: Total Disbursed Payouts -->
-      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 flex items-start justify-between">
-        <div class="space-y-1">
-          <span class="text-xs font-bold text-slate-500 dark:text-slate-400">إجمالي المستحقات المصروفة إلكترونياً</span>
-          <div id="kpi-total-paid" class="text-xl font-extrabold text-emerald-700 dark:text-emerald-400 font-mono-num">42,300,000 ل.س</div>
-          <p id="kpi-tx-count" class="text-xs text-slate-600 dark:text-slate-400">عبر سيريتل كاش وشام كاش وبيمو والهرم</p>
-        </div>
-        <div class="w-11 h-11 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shrink-0">
-          <svg class="w-6 h-6" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========================================================= -->
-    <!-- TAB 1: TASK MANAGEMENT WORKSPACE (KANBAN & TABLE VIEWS)   -->
-    <!-- ========================================================= -->
-    <section id="tab-board" class="tab-panel space-y-5">
-      <!-- Filter & View Toolbar -->
-      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4">
-        <div class="flex flex-wrap items-center gap-3 flex-1">
-          <!-- Search Input with Explicit Label -->
-          <div class="relative flex-1 min-w-[220px] max-w-md">
-            <label for="task-search-input" class="sr-only">بحث في المهام أو المشاريع أو الوسوم</label>
-            <svg class="w-4 h-4 text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-            <input
-              id="task-search-input"
-              type="search"
-              placeholder="ابحث بعنوان المهمة، الكود (TSK)، أو الوسم..."
-              class="w-full pr-10 pl-3 py-2 text-sm rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white"
-            />
-          </div>
-
-          <!-- Syrian Governorate Filter -->
-          <div class="flex items-center gap-1.5">
-            <label for="filter-governorate" class="text-xs font-bold text-slate-600 dark:text-slate-300">المحافظة:</label>
-            <select id="filter-governorate" class="cursor-pointer text-sm rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 font-semibold">
-              <option value="ALL">كل المحافظات السورية</option>
+          <div>
+            <label for="setup-ws-gov" class="block text-xs font-bold text-slate-300 mb-1">المحافظة الرئيسية</label>
+            <select id="setup-ws-gov" class="glass-input cursor-pointer px-3 py-2 rounded-xl text-sm font-bold">
               <option value="دمشق">دمشق</option>
               <option value="ريف دمشق">ريف دمشق</option>
               <option value="حلب">حلب</option>
@@ -303,222 +246,344 @@
               <option value="إدلب">إدلب</option>
               <option value="درعا">درعا</option>
               <option value="السويداء">السويداء</option>
+              <option value="دير الزور">دير الزور</option>
+              <option value="الحسكة">الحسكة</option>
+              <option value="الرقة">الرقة</option>
+            </select>
+          </div>
+          <button type="submit" class="cursor-pointer btn-aurora font-extrabold text-sm px-5 py-2.5 rounded-xl shrink-0">
+            حفظ وتفعيل مساحة العمل
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Bento KPI Row (100% Real Computed Metrics) -->
+    <section aria-label="المؤشرات الحقيقية للمنصة" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="glass-card rounded-3xl p-5 flex items-start justify-between">
+        <div class="space-y-1">
+          <span class="text-xs font-bold text-slate-400">إجمالي المهام الفعلية</span>
+          <div class="flex items-baseline gap-2">
+            <span id="kpi-total-tasks" class="text-3xl font-black font-mono-num">0</span>
+            <span id="kpi-done-rate" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-teal-500/20 text-teal-300 border border-teal-500/30">0% مكتملة</span>
+          </div>
+          <p id="kpi-projects-summary" class="text-xs text-slate-400">0 مشاريع • 0 أعضاء فريق</p>
+        </div>
+        <div class="w-12 h-12 rounded-2xl bg-teal-500/15 border border-teal-400/30 flex items-center justify-center text-teal-400 shrink-0">
+          <svg class="w-6 h-6" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+          </svg>
+        </div>
+      </div>
+
+      <div class="glass-card rounded-3xl p-5 flex items-start justify-between">
+        <div class="space-y-1">
+          <span class="text-xs font-bold text-slate-400">رصيد المحفظة الحقيقي المتاح</span>
+          <div id="kpi-wallet-balance" class="text-2xl font-black text-teal-400 font-mono-num">0 ل.س</div>
+          <p id="kpi-wallet-usd" class="text-xs text-slate-400 font-mono-num">$0.00 USD</p>
+        </div>
+        <button type="button" id="kpi-topup-shortcut" class="cursor-pointer px-3 py-1.5 rounded-xl bg-teal-500/20 hover:bg-teal-500/30 text-teal-300 border border-teal-500/30 text-xs font-bold">
+          + إيداع رصيد
+        </button>
+      </div>
+
+      <div class="glass-card rounded-3xl p-5 flex items-start justify-between">
+        <div class="space-y-1">
+          <span class="text-xs font-bold text-slate-400">مبالغ الضمان للمهام (Escrow)</span>
+          <div id="kpi-escrow-balance" class="text-2xl font-black text-amber-400 font-mono-num">0 ل.س</div>
+          <p class="text-xs text-slate-400">مخصصة للمهام قيد التنفيذ</p>
+        </div>
+        <div class="w-12 h-12 rounded-2xl bg-amber-500/15 border border-amber-400/30 flex items-center justify-center text-amber-400 shrink-0">
+          <svg class="w-6 h-6" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          </svg>
+        </div>
+      </div>
+
+      <div class="glass-card rounded-3xl p-5 flex items-start justify-between">
+        <div class="space-y-1">
+          <span class="text-xs font-bold text-slate-400">إجمالي المدفوعات المنفذة</span>
+          <div id="kpi-total-paid" class="text-2xl font-black text-emerald-400 font-mono-num">0 ل.س</div>
+          <p id="kpi-tx-count" class="text-xs text-slate-400">0 عمليات دفع مسجلة</p>
+        </div>
+        <div class="w-12 h-12 rounded-2xl bg-emerald-500/15 border border-emerald-400/30 flex items-center justify-center text-emerald-400 shrink-0">
+          <svg class="w-6 h-6" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- TAB 1: REAL TASK MANAGEMENT (KANBAN & TABLE)                        -->
+    <!-- =================================================================== -->
+    <section id="tab-board" class="tab-panel space-y-5">
+      <!-- Filter & View Bar -->
+      <div class="glass-panel rounded-3xl p-4 flex flex-wrap items-center justify-between gap-4">
+        <div class="flex flex-wrap items-center gap-3 flex-1">
+          <div class="relative flex-1 min-w-[220px] max-w-md">
+            <label for="task-search-input" class="sr-only">بحث في المهام</label>
+            <svg class="w-4 h-4 text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input
+              id="task-search-input"
+              type="search"
+              placeholder="ابحث في مهامك حسب العنوان أو المحافظة أو المكلف..."
+              class="glass-input w-full pr-10 pl-3 py-2 text-sm rounded-xl"
+            />
+          </div>
+
+          <div class="flex items-center gap-1.5">
+            <label for="filter-governorate" class="text-xs font-bold text-slate-300">المحافظة:</label>
+            <select id="filter-governorate" class="glass-input cursor-pointer text-sm rounded-xl px-3 py-2 font-semibold">
+              <option value="ALL">كل المحافظات</option>
+              <option value="دمشق">دمشق</option>
+              <option value="ريف دمشق">ريف دمشق</option>
+              <option value="حلب">حلب</option>
+              <option value="حمص">حمص</option>
+              <option value="اللاذقية">اللاذقية</option>
+              <option value="طرطوس">طرطوس</option>
+              <option value="حماة">حماة</option>
+              <option value="إدلب">إدلب</option>
+              <option value="درعا">درعا</option>
+              <option value="السويداء">السويداء</option>
+              <option value="دير الزور">دير الزور</option>
+              <option value="الحسكة">الحسكة</option>
+              <option value="الرقة">الرقة</option>
             </select>
           </div>
 
-          <!-- Priority Filter -->
           <div class="flex items-center gap-1.5">
-            <label for="filter-priority" class="text-xs font-bold text-slate-600 dark:text-slate-300">الأولوية:</label>
-            <select id="filter-priority" class="cursor-pointer text-sm rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 font-semibold">
-              <option value="ALL">جميع الأولويات</option>
+            <label for="filter-priority" class="text-xs font-bold text-slate-300">الأولوية:</label>
+            <select id="filter-priority" class="glass-input cursor-pointer text-sm rounded-xl px-3 py-2 font-semibold">
+              <option value="ALL">الكل</option>
               <option value="urgent">عاجل جداً</option>
               <option value="high">مرتفع</option>
               <option value="medium">متوسط</option>
               <option value="low">منخفض</option>
             </select>
           </div>
-
-          <!-- Payment Status Filter -->
-          <div class="flex items-center gap-1.5">
-            <label for="filter-payment" class="text-xs font-bold text-slate-600 dark:text-slate-300">حالة الدفع:</label>
-            <select id="filter-payment" class="cursor-pointer text-sm rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 font-semibold">
-              <option value="ALL">الكل</option>
-              <option value="unpaid">بانتظار الدفع</option>
-              <option value="escrow">محجوزة في الضمان (Escrow)</option>
-              <option value="paid">مدفوعة بالكامل</option>
-            </select>
-          </div>
         </div>
 
-        <!-- View Mode Switcher (Kanban vs List Table) -->
         <div class="flex items-center gap-2">
-          <div class="inline-flex rounded-xl bg-slate-100 dark:bg-slate-800 p-1 border border-slate-200 dark:border-slate-700" role="group" aria-label="طريقة عرض المهام">
-            <button type="button" data-view="kanban" class="view-mode-btn cursor-pointer flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-teal-600 text-white">
-              <svg class="w-4 h-4" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v12a2 2 0 01-2 2h-2a2 2 0 01-2-2V6z" />
-              </svg>
-              <span>لوحة كانبان</span>
-            </button>
-            <button type="button" data-view="table" class="view-mode-btn cursor-pointer flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-300">
-              <svg class="w-4 h-4" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-              </svg>
-              <span>الجدول التفصيلي</span>
-            </button>
+          <div class="inline-flex rounded-xl bg-slate-950/50 p-1 border border-white/10" role="group" aria-label="طريقة العرض">
+            <button type="button" data-view="kanban" class="view-mode-btn cursor-pointer px-3 py-1.5 rounded-lg text-xs font-bold bg-teal-600 text-white">لوحة كانبان</button>
+            <button type="button" data-view="table" class="view-mode-btn cursor-pointer px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300">الجدول التفصيلي</button>
           </div>
         </div>
       </div>
 
-      <!-- Kanban Board View -->
-      <div id="kanban-view-container" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-        <!-- Populated dynamically by app.js -->
+      <!-- Empty State When Tasks == 0 -->
+      <div id="tasks-empty-state" class="glass-panel rounded-3xl p-12 text-center space-y-5">
+        <div class="w-20 h-20 rounded-3xl btn-aurora mx-auto flex items-center justify-center text-white shadow-xl">
+          <svg class="w-10 h-10" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+          </svg>
+        </div>
+        <div class="max-w-lg mx-auto space-y-2">
+          <h3 class="text-xl font-black">لا توجد مهام مسجلة حالياً — مساحة العمل جاهزة لك</h3>
+          <p class="text-sm text-slate-400">
+            هذا التطبيق خالٍ تماماً من أي بيانات وهمية. يمكنك البدء فوراً بإضافة أول مهمة حقيقية لك، تحديد المحافظة والمكلف، رصد مكافأة المهمة بالليرة السورية أو الدولار، وإدارتها على لوحة كانبان.
+          </p>
+        </div>
+        <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+          <button type="button" data-trigger="open-new-task" class="cursor-pointer btn-gold font-extrabold text-sm px-6 py-3 rounded-2xl inline-flex items-center gap-2">
+            <svg class="w-5 h-5" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+            <span>إضافة أول مهمة حقيقية</span>
+          </button>
+          <button type="button" data-trigger="go-projects" class="cursor-pointer px-5 py-3 rounded-2xl glass-card text-sm font-bold text-teal-300">
+            + إنشاء مشروع جديد
+          </button>
+          <button type="button" data-trigger="go-team" class="cursor-pointer px-5 py-3 rounded-2xl glass-card text-sm font-bold text-slate-300">
+            + إضافة عضو للفريق
+          </button>
+        </div>
       </div>
 
-      <!-- Table List View (Hidden by default) -->
-      <div id="table-view-container" class="hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden">
+      <!-- Kanban Columns Container -->
+      <div id="kanban-view-container" class="hidden grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4"></div>
+
+      <!-- Table View Container -->
+      <div id="table-view-container" class="hidden glass-panel rounded-3xl overflow-hidden">
         <div class="overflow-x-auto">
           <table class="w-full text-right border-collapse">
             <thead>
-              <tr class="bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-600 dark:text-slate-300">
+              <tr class="bg-slate-950/50 border-b border-white/10 text-xs font-bold text-slate-300">
                 <th class="py-3.5 px-4">الرمز والمهمة</th>
                 <th class="py-3.5 px-4">المحافظة والمشروع</th>
                 <th class="py-3.5 px-4">المكلف</th>
                 <th class="py-3.5 px-4">الأولوية</th>
                 <th class="py-3.5 px-4">الحالة</th>
-                <th class="py-3.5 px-4">المستحقات المالية</th>
+                <th class="py-3.5 px-4">المستحقات</th>
                 <th class="py-3.5 px-4">حالة الدفع</th>
                 <th class="py-3.5 px-4 text-center">إجراءات</th>
               </tr>
             </thead>
-            <tbody id="tasks-table-body" class="divide-y divide-slate-200 dark:divide-slate-800 text-sm">
-              <!-- Populated dynamically -->
-            </tbody>
+            <tbody id="tasks-table-body" class="divide-y divide-white/10 text-sm"></tbody>
           </table>
         </div>
       </div>
     </section>
 
-    <!-- ========================================================= -->
-    <!-- TAB 2: SYRIAN ELECTRONIC PAYMENT GATEWAY & WALLET         -->
-    <!-- ========================================================= -->
-    <section id="tab-payments" class="tab-panel hidden space-y-6">
+    <!-- =================================================================== -->
+    <!-- TAB 2: REAL PROJECTS & BULLET CHARTS ANALYTICS                      -->
+    <!-- =================================================================== -->
+    <section id="tab-projects" class="tab-panel hidden space-y-6">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <!-- Right Column (7 cols): Interactive Syrian E-Payment Checkout -->
-        <div class="lg:col-span-7 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 space-y-6">
-          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-4">
-            <div>
-              <span class="text-xs font-bold uppercase tracking-wider text-teal-600 dark:text-teal-400">بوابة الدفع الإلكتروني الموحدة - سوريا</span>
-              <h2 class="text-xl font-extrabold text-slate-900 dark:text-white mt-0.5">إجراء عملية دفع أو تحويل مالي فوري</h2>
-            </div>
-            <span class="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
-              <svg class="w-4 h-4" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-              </svg>
-              تشفير أمني 256-Bit • إيصال فوري
-            </span>
-          </div>
+        <!-- Create Real Project Form (4 cols) -->
+        <div class="lg:col-span-4 glass-panel rounded-3xl p-6 space-y-4 h-fit">
+          <h2 class="text-lg font-black">إضافة مشروع حقيقي جديد</h2>
+          <p class="text-xs text-slate-400">تُحتسب نسبة إنجاز المشروع تلقائياً بناءً على المهام المرتبطة به.</p>
 
-          <form id="syria-payment-form" class="space-y-5">
-            <!-- Step 1: Payment Purpose Type -->
+          <form id="create-project-form" class="space-y-4">
             <div>
-              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">1. اختر نوع العملية المالية:</label>
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5" role="radiogroup" aria-label="نوع العملية المالية">
-                <button type="button" data-paytype="task_payout" class="pay-type-btn cursor-pointer p-3 rounded-xl border-2 border-teal-600 bg-teal-50/70 dark:bg-teal-950/40 text-right transition-colors">
-                  <div class="font-bold text-sm text-teal-900 dark:text-teal-200">صرف مستحقات مهمة</div>
-                  <div class="text-xs text-slate-600 dark:text-slate-400 mt-0.5">دفع مكافأة مهمة لمستقل أو عضو فريق</div>
-                </button>
-                <button type="button" data-paytype="wallet_topup" class="pay-type-btn cursor-pointer p-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 hover:border-teal-500 text-right transition-colors">
-                  <div class="font-bold text-sm text-slate-900 dark:text-white">شحن محفظة الشركة</div>
-                  <div class="text-xs text-slate-600 dark:text-slate-400 mt-0.5">إيداع رصيد جديد لتمويل المشاريع</div>
-                </button>
-                <button type="button" data-paytype="subscription" class="pay-type-btn cursor-pointer p-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 hover:border-teal-500 text-right transition-colors">
-                  <div class="font-bold text-sm text-slate-900 dark:text-white">تجديد اشتراك المنصة</div>
-                  <div class="text-xs text-slate-600 dark:text-slate-400 mt-0.5">ترقية حساب الفريق والباقة السحابية</div>
-                </button>
-              </div>
-              <input type="hidden" id="pay-type-input" value="task_payout" />
+              <label for="proj-name-input" class="block text-xs font-bold text-slate-300 mb-1">اسم المشروع *</label>
+              <input id="proj-name-input" type="text" required placeholder="أدخل اسم المشروع الفعلي" class="glass-input w-full px-3.5 py-2.5 rounded-xl text-sm" />
             </div>
 
-            <!-- Linked Task Selector (Shown when task_payout is active) -->
-            <div id="pay-task-selector-wrap" class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700 space-y-3">
-              <div class="flex items-center justify-between">
-                <label for="pay-task-select" class="text-xs font-bold text-slate-700 dark:text-slate-300">ربط العملية بمهمة محددة (اختياري للتعبئة التلقائية):</label>
-                <span class="text-[11px] text-teal-600 dark:text-teal-400 font-semibold">يحدّث حالة المهمة إلى «مدفوعة» تلقائياً</span>
-              </div>
-              <select id="pay-task-select" class="cursor-pointer w-full text-sm rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3.5 py-2.5 font-semibold">
-                <option value="">-- اختر مهمة لتعبئة بيانات المستفيد والمبلغ تلقائياً --</option>
+            <div>
+              <label for="proj-gov-input" class="block text-xs font-bold text-slate-300 mb-1">المحافظة السورية</label>
+              <select id="proj-gov-input" class="glass-input cursor-pointer w-full px-3.5 py-2.5 rounded-xl text-sm font-semibold">
+                <option value="دمشق">دمشق</option>
+                <option value="ريف دمشق">ريف دمشق</option>
+                <option value="حلب">حلب</option>
+                <option value="حمص">حمص</option>
+                <option value="اللاذقية">اللاذقية</option>
+                <option value="طرطوس">طرطوس</option>
+                <option value="حماة">حماة</option>
+                <option value="إدلب">إدلب</option>
+                <option value="درعا">درعا</option>
+                <option value="السويداء">السويداء</option>
+                <option value="دير الزور">دير الزور</option>
+                <option value="الحسكة">الحسكة</option>
+                <option value="الرقة">الرقة</option>
               </select>
             </div>
 
-            <!-- Step 2: Select Syrian Payment Gateway -->
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label for="proj-budget-input" class="block text-xs font-bold text-slate-300 mb-1">الميزانية المرصودة (ل.س)</label>
+                <input id="proj-budget-input" type="number" min="0" step="50000" value="0" class="glass-input w-full px-3 py-2 rounded-xl text-sm font-mono-num" />
+              </div>
+              <div>
+                <label for="proj-target-input" class="block text-xs font-bold text-slate-300 mb-1">نسبة الإنجاز المستهدفة %</label>
+                <input id="proj-target-input" type="number" min="1" max="100" value="100" class="glass-input w-full px-3 py-2 rounded-xl text-sm font-mono-num" />
+              </div>
+            </div>
+
+            <button type="submit" class="cursor-pointer w-full py-3 rounded-xl btn-aurora font-extrabold text-sm">
+              + إنشاء وحفظ المشروع
+            </button>
+          </form>
+        </div>
+
+        <!-- Projects List & Bullet Charts (8 cols) -->
+        <div class="lg:col-span-8 glass-panel rounded-3xl p-6 space-y-5">
+          <div class="flex items-center justify-between">
             <div>
-              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">2. اختر وسيلة الدفع الإلكتروني المعتمدة في سوريا:</label>
-              <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5" id="payment-methods-grid">
-                <!-- Method 1: Syriatel Cash -->
-                <button type="button" data-method="syriatel_cash" class="pay-method-btn cursor-pointer p-3 rounded-xl border-2 border-teal-600 bg-teal-50/60 dark:bg-teal-950/50 flex flex-col items-start gap-1 text-right transition-colors">
-                  <span class="inline-flex items-center justify-between w-full">
-                    <span class="px-2 py-0.5 rounded text-[11px] font-extrabold bg-red-600 text-white">Syriatel Cash</span>
-                    <span class="text-[11px] font-mono-num text-slate-500">رمز التاجر</span>
-                  </span>
-                  <span class="font-bold text-sm text-slate-900 dark:text-white mt-1">سيريتل كاش</span>
-                  <span class="text-[11px] text-slate-500 dark:text-slate-400">دفع فوري عبر رمز التاجر أو تحويل</span>
-                </button>
+              <h2 class="text-lg font-black">مشاريعك ومؤشرات الإنجاز مقابل المستهدف (Bullet Charts)</h2>
+              <p class="text-xs text-slate-400">تتحدث نسب الإنجاز تلقائياً عند إكمال المهام المرتبطة بكل مشروع</p>
+            </div>
+          </div>
 
-                <!-- Method 2: Sham Cash -->
-                <button type="button" data-method="sham_cash" class="pay-method-btn cursor-pointer p-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 flex flex-col items-start gap-1 text-right transition-colors">
-                  <span class="inline-flex items-center justify-between w-full">
-                    <span class="px-2 py-0.5 rounded text-[11px] font-extrabold bg-emerald-600 text-white">Sham Cash</span>
-                    <span class="text-[11px] font-mono-num text-slate-500">SYP / USD</span>
-                  </span>
-                  <span class="font-bold text-sm text-slate-900 dark:text-white mt-1">شام كاش</span>
-                  <span class="text-[11px] text-slate-500 dark:text-slate-400">تحويل فوري بالليرة أو الدولار + QR</span>
-                </button>
+          <div id="projects-list-container" class="space-y-4"></div>
+        </div>
+      </div>
+    </section>
 
-                <!-- Method 3: MTN Cash -->
-                <button type="button" data-method="mtn_cash" class="pay-method-btn cursor-pointer p-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 flex flex-col items-start gap-1 text-right transition-colors">
-                  <span class="inline-flex items-center justify-between w-full">
-                    <span class="px-2 py-0.5 rounded text-[11px] font-extrabold bg-amber-400 text-slate-950">MTN Cash</span>
-                    <span class="text-[11px] font-mono-num text-slate-500">*2021#</span>
-                  </span>
-                  <span class="font-bold text-sm text-slate-900 dark:text-white mt-1">إم تي إن كاش</span>
-                  <span class="text-[11px] text-slate-500 dark:text-slate-400">محفظة كاش موبايل وتأكيد فوري</span>
-                </button>
+    <!-- =================================================================== -->
+    <!-- TAB 3: SYRIAN ELECTRONIC PAYMENT GATEWAY & REAL WALLET              -->
+    <!-- =================================================================== -->
+    <section id="tab-payments" class="tab-panel hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Payment Execution Form (7 cols) -->
+        <div class="lg:col-span-7 glass-panel rounded-3xl p-6 space-y-5">
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4">
+            <div>
+              <span class="text-xs font-bold text-teal-400">بوابة الدفع الإلكتروني السورية</span>
+              <h2 class="text-xl font-black mt-0.5">تسجيل وتنفيذ عملية مالية حقيقية</h2>
+            </div>
+            <button type="button" data-trigger="go-gateways" class="cursor-pointer text-xs font-bold px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-teal-300">
+              ضبط أرقام حساباتك (سيريتل / شام / بيمو) ⚙
+            </button>
+          </div>
 
-                <!-- Method 4: Bemo / ECash -->
-                <button type="button" data-method="bemo_ecash" class="pay-method-btn cursor-pointer p-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 flex flex-col items-start gap-1 text-right transition-colors">
-                  <span class="inline-flex items-center justify-between w-full">
-                    <span class="px-2 py-0.5 rounded text-[11px] font-extrabold bg-blue-700 text-white">BBSF / ECash</span>
-                    <span class="text-[11px] font-mono-num text-slate-500">بطاقة بنكية</span>
-                  </span>
-                  <span class="font-bold text-sm text-slate-900 dark:text-white mt-1">بنك بيمو / إي كاش</span>
-                  <span class="text-[11px] text-slate-500 dark:text-slate-400">البطاقات المصرفية السورية والحسابات</span>
+          <form id="syria-payment-form" class="space-y-5">
+            <!-- Operation Type -->
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-2">1. اختر نوع العملية المالية:</label>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                <button type="button" data-paytype="wallet_topup" class="pay-type-btn cursor-pointer p-3 rounded-2xl border-2 border-teal-500 bg-teal-500/15 text-right transition-all">
+                  <div class="font-extrabold text-sm">إيداع / شحن المحفظة</div>
+                  <div class="text-xs text-slate-400 mt-0.5">إضافة رصيد حقيقي إلى محفظتك</div>
                 </button>
-
-                <!-- Method 5: Al-Haram / Al-Fouad Transfer -->
-                <button type="button" data-method="haram_transfer" class="pay-method-btn cursor-pointer p-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 flex flex-col items-start gap-1 text-right transition-colors">
-                  <span class="inline-flex items-center justify-between w-full">
-                    <span class="px-2 py-0.5 rounded text-[11px] font-extrabold bg-amber-700 text-white">الهرم / الفؤاد</span>
-                    <span class="text-[11px] font-mono-num text-slate-500">حوالة مالية</span>
-                  </span>
-                  <span class="font-bold text-sm text-slate-900 dark:text-white mt-1">شركة الهرم للحوالات</span>
-                  <span class="text-[11px] text-slate-500 dark:text-slate-400">توثيق إشعار الحوالة في كافة الفروع</span>
+                <button type="button" data-paytype="task_payout" class="pay-type-btn cursor-pointer p-3 rounded-2xl border-2 border-white/10 hover:border-teal-500/50 text-right transition-all">
+                  <div class="font-extrabold text-sm">صرف مستحقات مهمة</div>
+                  <div class="text-xs text-slate-400 mt-0.5">دفع مكافأة مهمة وتحديث حالتها</div>
                 </button>
+                <button type="button" data-paytype="direct_transfer" class="pay-type-btn cursor-pointer p-3 rounded-2xl border-2 border-white/10 hover:border-teal-500/50 text-right transition-all">
+                  <div class="font-extrabold text-sm">تحويل مالي مباشر</div>
+                  <div class="text-xs text-slate-400 mt-0.5">تحويل لمستفيد مع إصدار إيصال</div>
+                </button>
+              </div>
+              <input type="hidden" id="pay-type-input" value="wallet_topup" />
+            </div>
 
-                <!-- Method 6: USDT TRC20 -->
-                <button type="button" data-method="usdt_trc20" class="pay-method-btn cursor-pointer p-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 flex flex-col items-start gap-1 text-right transition-colors">
-                  <span class="inline-flex items-center justify-between w-full">
-                    <span class="px-2 py-0.5 rounded text-[11px] font-extrabold bg-teal-700 text-white">USDT TRC20</span>
-                    <span class="text-[11px] font-mono-num text-slate-500">Crypto</span>
-                  </span>
-                  <span class="font-bold text-sm text-slate-900 dark:text-white mt-1">عملة رقمية USDT</span>
-                  <span class="text-[11px] text-slate-500 dark:text-slate-400">تحويل دولي للفرق عبر شبكة TRON</span>
+            <!-- Task Selector (Shown when task_payout is selected) -->
+            <div id="pay-task-selector-wrap" class="hidden bg-slate-950/50 p-4 rounded-2xl border border-white/10 space-y-2">
+              <label for="pay-task-select" class="block text-xs font-bold text-slate-300">اختر المهمة المراد صرف مستحقاتها:</label>
+              <select id="pay-task-select" class="glass-input cursor-pointer w-full text-sm rounded-xl px-3.5 py-2.5 font-semibold">
+                <option value="">-- اختر مهمة من مهامك المسجلة --</option>
+              </select>
+            </div>
+
+            <!-- Payment Method Selector -->
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-2">2. اختر قناة الدفع الإلكتروني السورية:</label>
+              <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                <button type="button" data-method="syriatel_cash" class="pay-method-btn cursor-pointer p-3 rounded-2xl border-2 border-teal-500 bg-teal-500/15 text-right">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-red-600 text-white">Syriatel Cash</span>
+                  <div class="font-extrabold text-sm mt-1.5">سيريتل كاش</div>
+                </button>
+                <button type="button" data-method="sham_cash" class="pay-method-btn cursor-pointer p-3 rounded-2xl border-2 border-white/10 text-right">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-600 text-white">Sham Cash</span>
+                  <div class="font-extrabold text-sm mt-1.5">شام كاش</div>
+                </button>
+                <button type="button" data-method="mtn_cash" class="pay-method-btn cursor-pointer p-3 rounded-2xl border-2 border-white/10 text-right">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-amber-400 text-slate-950">MTN Cash</span>
+                  <div class="font-extrabold text-sm mt-1.5">إم تي إن كاش</div>
+                </button>
+                <button type="button" data-method="bemo_ecash" class="pay-method-btn cursor-pointer p-3 rounded-2xl border-2 border-white/10 text-right">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-blue-600 text-white">BBSF / ECash</span>
+                  <div class="font-extrabold text-sm mt-1.5">بنك بيمو / إي كاش</div>
+                </button>
+                <button type="button" data-method="haram_transfer" class="pay-method-btn cursor-pointer p-3 rounded-2xl border-2 border-white/10 text-right">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-amber-700 text-white">Al-Haram</span>
+                  <div class="font-extrabold text-sm mt-1.5">الهرم / الفؤاد</div>
+                </button>
+                <button type="button" data-method="usdt_trc20" class="pay-method-btn cursor-pointer p-3 rounded-2xl border-2 border-white/10 text-right">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-teal-600 text-white">USDT TRC20</span>
+                  <div class="font-extrabold text-sm mt-1.5">عملة رقمية USDT</div>
                 </button>
               </div>
               <input type="hidden" id="pay-method-input" value="syriatel_cash" />
             </div>
 
-            <!-- Dynamic Gateway Instructions Box (Updates per gateway) -->
-            <div id="gateway-instructions-box" class="rounded-xl p-4 bg-teal-50/90 dark:bg-slate-800 border border-teal-200 dark:border-teal-800 space-y-2">
-              <!-- Populated dynamically by app.js -->
-            </div>
+            <!-- Live Configured Account Info & Dynamic QR -->
+            <div id="gateway-live-account-box" class="rounded-2xl p-4 bg-slate-950/60 border border-teal-500/30"></div>
 
-            <!-- Step 3: Recipient, Governorate, and Amount Fields -->
+            <!-- Recipient, Governorate, Account, and Operation Reference -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label for="pay-recipient-input" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">اسم المستفيد / الجهة المستلمة *</label>
-                <input
-                  id="pay-recipient-input"
-                  type="text"
-                  required
-                  value="م. يامن الدمشقي"
-                  placeholder="مثال: م. يامن الدمشقي"
-                  class="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800"
-                />
+                <label for="pay-recipient-input" class="block text-xs font-bold text-slate-300 mb-1.5">اسم المستفيد / صاحب العملية *</label>
+                <input id="pay-recipient-input" type="text" required placeholder="أدخل الاسم الحقيقي للمستفيد أو المودع" class="glass-input w-full px-3.5 py-2.5 text-sm rounded-xl" />
               </div>
-
               <div>
-                <label for="pay-gov-select" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">المحافظة / الفرع *</label>
-                <select id="pay-gov-select" class="cursor-pointer w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 font-semibold">
+                <label for="pay-gov-select" class="block text-xs font-bold text-slate-300 mb-1.5">المحافظة *</label>
+                <select id="pay-gov-select" class="glass-input cursor-pointer w-full px-3.5 py-2.5 text-sm rounded-xl font-semibold">
                   <option value="دمشق">دمشق</option>
                   <option value="ريف دمشق">ريف دمشق</option>
                   <option value="حلب">حلب</option>
@@ -529,261 +594,282 @@
                   <option value="إدلب">إدلب</option>
                   <option value="درعا">درعا</option>
                   <option value="السويداء">السويداء</option>
+                  <option value="دير الزور">دير الزور</option>
+                  <option value="الحسكة">الحسكة</option>
+                  <option value="الرقة">الرقة</option>
                 </select>
               </div>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label for="pay-account-input" id="pay-account-label" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">رقم الموبايل / حساب المستفيد (سيريتل كاش) *</label>
-                <input
-                  id="pay-account-input"
-                  type="text"
-                  required
-                  value="0933451289"
-                  placeholder="093XXXXXXX"
-                  class="w-full px-3.5 py-2.5 text-sm font-mono-num rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800"
-                />
+                <label for="pay-account-input" class="block text-xs font-bold text-slate-300 mb-1.5">رقم الحساب / الموبايل / المحفظة *</label>
+                <input id="pay-account-input" type="text" required placeholder="أدخل رقم الموبايل أو الحساب الفعلي" class="glass-input w-full px-3.5 py-2.5 text-sm font-mono-num rounded-xl" />
               </div>
-
               <div>
-                <label for="pay-ref-input" id="pay-ref-label" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">رقم عملية التحويل / رمز التأكيد (OTP)</label>
-                <input
-                  id="pay-ref-input"
-                  type="text"
-                  value="SYR-8849201"
-                  placeholder="أدخل رقم العملية أو اتركه للتوليد التلقائي"
-                  class="w-full px-3.5 py-2.5 text-sm font-mono-num rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800"
-                />
+                <label for="pay-ref-input" class="block text-xs font-bold text-slate-300 mb-1.5">رقم عملية التحويل / الإشعار الفعلي *</label>
+                <input id="pay-ref-input" type="text" required placeholder="رقم العملية من رسالة SMS أو الإشعار" class="glass-input w-full px-3.5 py-2.5 text-sm font-mono-num rounded-xl" />
               </div>
             </div>
 
-            <!-- Dual Amount Input (SYP <-> USD synchronized) -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50 dark:bg-slate-800/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
+            <!-- Synchronized SYP <-> USD Amount Inputs -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-950/50 p-4 rounded-2xl border border-white/10">
               <div>
-                <label for="pay-amount-syp" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">المبلغ بالليرة السورية (ل.س SYP) *</label>
-                <input
-                  id="pay-amount-syp"
-                  type="number"
-                  min="15000"
-                  step="25000"
-                  required
-                  value="1950000"
-                  class="w-full px-3.5 py-2.5 text-base font-extrabold font-mono-num text-teal-800 dark:text-teal-300 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900"
-                />
+                <label for="pay-amount-syp" class="block text-xs font-bold text-slate-300 mb-1.5">المبلغ بالليرة السورية (ل.س SYP) *</label>
+                <input id="pay-amount-syp" type="number" min="1" step="any" required placeholder="مثال: 1500000" class="glass-input w-full px-3.5 py-2.5 text-base font-black font-mono-num text-teal-300 rounded-xl" />
               </div>
-
               <div>
-                <label for="pay-amount-usd" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">المعادل بالدولار الأمريكي ($ USD)</label>
-                <input
-                  id="pay-amount-usd"
-                  type="number"
-                  min="1"
-                  step="5"
-                  value="130"
-                  class="w-full px-3.5 py-2.5 text-base font-extrabold font-mono-num text-amber-700 dark:text-amber-400 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900"
-                />
+                <label for="pay-amount-usd" class="block text-xs font-bold text-slate-300 mb-1.5">المعادل بالدولار الأمريكي ($ USD)</label>
+                <input id="pay-amount-usd" type="number" min="0.01" step="any" placeholder="مثال: 100" class="glass-input w-full px-3.5 py-2.5 text-base font-black font-mono-num text-amber-300 rounded-xl" />
               </div>
             </div>
 
             <div>
-              <label for="pay-title-input" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">البيان / وصف الدفعة المالية *</label>
-              <input
-                id="pay-title-input"
-                type="text"
-                required
-                value="صرف مستحقات مهمة برمجة محرك الفوترة المزدوج (TSK-104)"
-                class="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800"
-              />
+              <label for="pay-title-input" class="block text-xs font-bold text-slate-300 mb-1.5">بيان العملية / الوصف *</label>
+              <input id="pay-title-input" type="text" required placeholder="مثال: إيداع رصيد للمحفظة أو دفعة المهمة..." class="glass-input w-full px-3.5 py-2.5 text-sm rounded-xl" />
             </div>
 
-            <!-- Submit Button with Loading Feedback State -->
-            <button
-              type="submit"
-              id="pay-submit-btn"
-              class="cursor-pointer w-full py-3.5 px-6 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-extrabold text-base flex items-center justify-center gap-2.5 transition-colors"
-            >
+            <button type="submit" class="cursor-pointer w-full py-3.5 px-6 rounded-2xl btn-aurora font-black text-base flex items-center justify-center gap-2">
               <svg class="w-5 h-5" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
               </svg>
-              <span id="pay-submit-text">تأكيد وتنفيذ الدفع الإلكتروني وإصدار الإيصال</span>
+              <span>تسجيل وتأكيد العملية المالية وإصدار الإيصال</span>
             </button>
           </form>
         </div>
 
-        <!-- Left Column (5 cols): Wallet Card + Transaction History Ledger -->
+        <!-- Real Transactions Ledger (5 cols) -->
         <div class="lg:col-span-5 space-y-6">
-          <!-- Syrian Digital Wallet Visual Card -->
-          <div class="damascus-pattern text-white rounded-2xl p-6 border border-teal-600/40 space-y-5">
+          <div class="glass-panel rounded-3xl p-6 space-y-4">
             <div class="flex items-center justify-between">
-              <div>
-                <span class="text-xs text-teal-200 font-semibold">المحفظة المؤسسية الموحدة</span>
-                <h3 class="text-lg font-extrabold">مَدار سوريا كاش (Madar Pay)</h3>
-              </div>
-              <span class="px-2.5 py-1 rounded-lg bg-white/10 border border-white/20 font-mono-num text-xs">SY-WALLET-009</span>
+              <h3 class="text-base font-black">سجل المعاملات والإيصالات الحقيقية</h3>
+              <span id="ledger-count-badge" class="text-xs font-mono-num px-2.5 py-0.5 rounded-full bg-white/10">0 عمليات</span>
             </div>
-
-            <div class="grid grid-cols-2 gap-4 pt-2 border-t border-teal-500/30">
-              <div>
-                <span class="text-xs text-teal-200">الرصيد المتاح حالياً</span>
-                <div id="wallet-card-syp" class="text-xl font-extrabold font-mono-num text-white mt-0.5">24,750,000 ل.س</div>
-                <div id="wallet-card-usd" class="text-xs font-mono-num text-amber-300">≈ $1,650.00 USD</div>
-              </div>
-              <div>
-                <span class="text-xs text-teal-200">الضمان المحجوز (Escrow)</span>
-                <div id="wallet-card-escrow" class="text-xl font-extrabold font-mono-num text-teal-100 mt-0.5">8,250,000 ل.س</div>
-                <div class="text-xs text-teal-200">لحماية المستقلين والشركات</div>
-              </div>
-            </div>
-
-            <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-teal-500/30 text-xs">
-              <span class="text-teal-100">القنوات المفعلة: سيريتل • شام كاش • MTN • بيمو • الهرم</span>
-              <button type="button" id="quick-topup-btn" class="cursor-pointer px-3 py-1.5 rounded-lg bg-orange-600 hover:bg-orange-500 text-white font-bold transition-colors">
-                + شحن سريع للمحفظة
-              </button>
-            </div>
-          </div>
-
-          <!-- Financial Ledger & Receipts -->
-          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4">
-            <div class="flex items-center justify-between">
-              <h3 class="text-base font-extrabold text-slate-900 dark:text-white">سجل المعاملات والإيصالات الإلكترونية</h3>
-              <span class="text-xs text-slate-500 dark:text-slate-400">انقر على أي عملية لعرض الإيصال</span>
-            </div>
-
-            <div id="transactions-list" class="space-y-3 max-h-[460px] overflow-y-auto pr-1">
-              <!-- Populated dynamically -->
-            </div>
+            <div id="transactions-list" class="space-y-3 max-h-[540px] overflow-y-auto pr-1"></div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ========================================================= -->
-    <!-- TAB 3: ANALYTICS & PERFORMANCE (BULLET CHARTS + A11Y)     -->
-    <!-- ========================================================= -->
-    <section id="tab-analytics" class="tab-panel hidden space-y-6">
+    <!-- =================================================================== -->
+    <!-- TAB 4: REAL TEAM & FREELANCERS DIRECTORY                            -->
+    <!-- =================================================================== -->
+    <section id="tab-team" class="tab-panel hidden space-y-6">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <!-- Bullet Charts: Project Performance vs Target (Per UI/UX Pro Max Chart Guidelines) -->
-        <div class="lg:col-span-7 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 space-y-5">
-          <div class="flex flex-wrap items-center justify-between gap-2">
+        <!-- Add Real Team Member Form (4 cols) -->
+        <div class="lg:col-span-4 glass-panel rounded-3xl p-6 space-y-4 h-fit">
+          <h2 class="text-lg font-black">إضافة عضو فريق أو مستقل حقيقي</h2>
+          <p class="text-xs text-slate-400">أضف أعضاء فريقك الفعليين مع أرقام محافظهم لتكليفهم بالمهام وتحويل مستحقاتهم.</p>
+
+          <form id="create-member-form" class="space-y-3.5">
             <div>
-              <span class="text-xs font-bold text-teal-600 dark:text-teal-400">مؤشرات الإنجاز مقابل المستهدف (Bullet Charts)</span>
-              <h2 class="text-lg font-extrabold text-slate-900 dark:text-white">أداء المشاريع السورية وميزانياتها</h2>
+              <label for="mem-name-input" class="block text-xs font-bold text-slate-300 mb-1">الاسم الكامل *</label>
+              <input id="mem-name-input" type="text" required placeholder="أدخل اسم العضو أو المستقل" class="glass-input w-full px-3.5 py-2.5 rounded-xl text-sm" />
             </div>
-            <div class="flex items-center gap-3 text-xs font-semibold">
-              <span class="inline-flex items-center gap-1"><span class="w-3 h-3 rounded-sm bg-teal-600 inline-block"></span> الإنجاز الفعلي</span>
-              <span class="inline-flex items-center gap-1"><span class="w-1 h-3.5 bg-slate-900 dark:bg-amber-400 inline-block"></span> الهدف المخطط</span>
+            <div>
+              <label for="mem-role-input" class="block text-xs font-bold text-slate-300 mb-1">المسمى الوظيفي / الاختصاص *</label>
+              <input id="mem-role-input" type="text" required placeholder="مثال: مطور ويب، مصمم، محاسب..." class="glass-input w-full px-3.5 py-2.5 rounded-xl text-sm" />
             </div>
-          </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label for="mem-gov-input" class="block text-xs font-bold text-slate-300 mb-1">المحافظة</label>
+                <select id="mem-gov-input" class="glass-input cursor-pointer w-full px-3 py-2.5 rounded-xl text-sm font-semibold">
+                  <option value="دمشق">دمشق</option>
+                  <option value="ريف دمشق">ريف دمشق</option>
+                  <option value="حلب">حلب</option>
+                  <option value="حمص">حمص</option>
+                  <option value="اللاذقية">اللاذقية</option>
+                  <option value="طرطوس">طرطوس</option>
+                  <option value="حماة">حماة</option>
+                  <option value="إدلب">إدلب</option>
+                  <option value="درعا">درعا</option>
+                  <option value="السويداء">السويداء</option>
+                  <option value="دير الزور">دير الزور</option>
+                  <option value="الحسكة">الحسكة</option>
+                  <option value="الرقة">الرقة</option>
+                </select>
+              </div>
+              <div>
+                <label for="mem-phone-input" class="block text-xs font-bold text-slate-300 mb-1">رقم الموبايل *</label>
+                <input id="mem-phone-input" type="text" required placeholder="09XXXXXXXX" class="glass-input w-full px-3 py-2.5 rounded-xl text-sm font-mono-num" />
+              </div>
+            </div>
+            <div>
+              <label for="mem-method-input" class="block text-xs font-bold text-slate-300 mb-1">وسيلة الدفع المفضلة للعضو</label>
+              <select id="mem-method-input" class="glass-input cursor-pointer w-full px-3.5 py-2.5 rounded-xl text-sm font-semibold">
+                <option value="syriatel_cash">سيريتل كاش (Syriatel Cash)</option>
+                <option value="sham_cash">شام كاش (Sham Cash)</option>
+                <option value="mtn_cash">إم تي إن كاش (MTN Cash)</option>
+                <option value="bemo_ecash">بنك بيمو / إي كاش (ECash)</option>
+                <option value="haram_transfer">شركة الهرم / الفؤاد للحوالات</option>
+                <option value="usdt_trc20">عملة رقمية USDT TRC20</option>
+              </select>
+            </div>
+            <div>
+              <label for="mem-wallet-input" class="block text-xs font-bold text-slate-300 mb-1">تفاصيل حساب الدفع / معرف المحفظة</label>
+              <input id="mem-wallet-input" type="text" placeholder="رقم حساب شام كاش أو حساب بنك بيمو أو المحفظة" class="glass-input w-full px-3.5 py-2.5 rounded-xl text-sm font-mono-num" />
+            </div>
 
-          <div id="bullet-charts-container" class="space-y-5">
-            <!-- Populated dynamically -->
-          </div>
-
-          <!-- Accessible Fallback Data Table (Required by UI/UX Pro Max A11y Chart Rules) -->
-          <div class="pt-4 border-t border-slate-200 dark:border-slate-800">
-            <h3 class="text-xs font-bold text-slate-600 dark:text-slate-300 mb-2">الجدول الرقمي المرجعي لمؤشرات الأداء (توافق قارئات الشاشة ولوحة المفاتيح):</h3>
-            <div class="overflow-x-auto">
-              <table class="w-full text-right text-xs border border-slate-200 dark:border-slate-700 rounded-xl">
-                <thead class="bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
-                  <tr>
-                    <th class="p-2.5">المشروع</th>
-                    <th class="p-2.5">المحافظة</th>
-                    <th class="p-2.5">الإنجاز الفعلي</th>
-                    <th class="p-2.5">المستهدف</th>
-                    <th class="p-2.5">الميزانية المرصودة</th>
-                    <th class="p-2.5">التقييم</th>
-                  </tr>
-                </thead>
-                <tbody id="analytics-a11y-table" class="divide-y divide-slate-200 dark:divide-slate-800">
-                  <!-- Populated dynamically -->
-                </tbody>
-              </table>
-            </div>
-          </div>
+            <button type="submit" class="cursor-pointer w-full py-3 rounded-xl btn-aurora font-extrabold text-sm">
+              + إضافة العضو إلى الفريق
+            </button>
+          </form>
         </div>
 
-        <!-- Payment Gateways Breakdown & Governorate Distribution -->
-        <div class="lg:col-span-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 space-y-5">
-          <div>
-            <span class="text-xs font-bold text-orange-600 dark:text-orange-400">التوزيع المالي الإلكتروني</span>
-            <h2 class="text-lg font-extrabold text-slate-900 dark:text-white">حجم التداول حسب وسائل الدفع في سوريا</h2>
-          </div>
-
-          <div id="payment-channels-chart" class="space-y-4">
-            <!-- Populated dynamically -->
-          </div>
+        <!-- Team Members Grid (8 cols) -->
+        <div class="lg:col-span-8 glass-panel rounded-3xl p-6 space-y-4">
+          <h2 class="text-lg font-black">قائمة أعضاء الفريق والمستقلين الفعليين</h2>
+          <div id="team-grid-container" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
         </div>
       </div>
     </section>
 
-    <!-- ========================================================= -->
-    <!-- TAB 4: SYRIAN TEAM & FREELANCERS DIRECTORY                -->
-    <!-- ========================================================= -->
-    <section id="tab-team" class="tab-panel hidden space-y-5">
-      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h2 class="text-lg font-extrabold text-slate-900 dark:text-white">دليل أعضاء الفريق والمستقلين في المحافظات السورية</h2>
-          <p class="text-xs text-slate-600 dark:text-slate-400">حسابات الدفع الإلكتروني موثقة وجاهزة لتحويل مكافآت المهام فوراً</p>
+    <!-- =================================================================== -->
+    <!-- TAB 5: REAL PAYMENT GATEWAY ACCOUNTS CONFIGURATION                  -->
+    <!-- =================================================================== -->
+    <section id="tab-gateways" class="tab-panel hidden space-y-6">
+      <div class="glass-panel rounded-3xl p-6 space-y-6">
+        <div class="border-b border-white/10 pb-4">
+          <span class="text-xs font-bold text-teal-400">إعدادات الحسابات المالية الحقيقية</span>
+          <h2 class="text-xl font-black mt-0.5">ربط وضبط حسابات الدفع الإلكتروني الخاصة بك أو بشركتك</h2>
+          <p class="text-xs text-slate-400 mt-1">
+            أدخل أرقامك ومعرفاتك الحقيقية في سيريتل كاش، شام كاش، إم تي إن كاش، بنك بيمو، الهرم، وUSDT لتظهر تلقائياً مع توليد رمز QR حقيقي في بوابة الدفع والإيصالات.
+          </p>
         </div>
-      </div>
 
-      <div id="team-grid-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        <!-- Populated dynamically -->
-      </div>
-    </section>
+        <form id="payment-accounts-form" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <!-- Syriatel Cash Config -->
+          <div class="glass-card rounded-2xl p-5 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-0.5 rounded text-xs font-extrabold bg-red-600 text-white">Syriatel Cash</span>
+              <span class="text-xs font-bold text-slate-400">سيريتل كاش</span>
+            </div>
+            <div>
+              <label for="cfg-syr-merchant" class="block text-xs font-bold text-slate-300 mb-1">رمز التاجر (Merchant Code)</label>
+              <input id="cfg-syr-merchant" type="text" placeholder="أدخل رمز التاجر الخاص بك" class="glass-input w-full px-3 py-2 rounded-xl text-sm font-mono-num" />
+            </div>
+            <div>
+              <label for="cfg-syr-phone" class="block text-xs font-bold text-slate-300 mb-1">رقم موبايل سيريتل كاش</label>
+              <input id="cfg-syr-phone" type="text" placeholder="093XXXXXXX / 098XXXXXXX" class="glass-input w-full px-3 py-2 rounded-xl text-sm font-mono-num" />
+            </div>
+          </div>
 
-    <!-- ========================================================= -->
-    <!-- TAB 5: SYRIAN SAAS SUBSCRIPTION PLANS                     -->
-    <!-- ========================================================= -->
-    <section id="tab-plans" class="tab-panel hidden space-y-6">
-      <div class="text-center max-w-2xl mx-auto space-y-2">
-        <span class="text-xs font-bold px-3 py-1 rounded-full bg-teal-100 dark:bg-teal-950 text-teal-800 dark:text-teal-300">باقات مرنة بالليرة السورية والدولار</span>
-        <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white">خطط الاشتراك للشركات والفرق السورية</h2>
-        <p class="text-sm text-slate-600 dark:text-slate-400">ادفع اشتراك فريقك بسهولة عبر سيريتل كاش، شام كاش، إم تي إن كاش، أو بنك بيمو</p>
-      </div>
+          <!-- Sham Cash Config -->
+          <div class="glass-card rounded-2xl p-5 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-0.5 rounded text-xs font-extrabold bg-emerald-600 text-white">Sham Cash</span>
+              <span class="text-xs font-bold text-slate-400">شام كاش</span>
+            </div>
+            <div>
+              <label for="cfg-sham-id" class="block text-xs font-bold text-slate-300 mb-1">معرف حساب شام كاش (Account ID)</label>
+              <input id="cfg-sham-id" type="text" placeholder="أدخل معرف حسابك في شام كاش" class="glass-input w-full px-3 py-2 rounded-xl text-sm font-mono-num" />
+            </div>
+            <div>
+              <label for="cfg-sham-holder" class="block text-xs font-bold text-slate-300 mb-1">اسم صاحب الحساب في شام كاش</label>
+              <input id="cfg-sham-holder" type="text" placeholder="الاسم كما يظهر في التطبيق" class="glass-input w-full px-3 py-2 rounded-xl text-sm" />
+            </div>
+          </div>
 
-      <div id="plans-grid-container" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Populated dynamically -->
+          <!-- MTN Cash Config -->
+          <div class="glass-card rounded-2xl p-5 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-0.5 rounded text-xs font-extrabold bg-amber-400 text-slate-950">MTN Cash</span>
+              <span class="text-xs font-bold text-slate-400">إم تي إن كاش</span>
+            </div>
+            <div>
+              <label for="cfg-mtn-phone" class="block text-xs font-bold text-slate-300 mb-1">رقم محفظة MTN كاش</label>
+              <input id="cfg-mtn-phone" type="text" placeholder="094XXXXXXX / 095XXXXXXX" class="glass-input w-full px-3 py-2 rounded-xl text-sm font-mono-num" />
+            </div>
+            <div>
+              <label for="cfg-mtn-holder" class="block text-xs font-bold text-slate-300 mb-1">اسم صاحب المحفظة</label>
+              <input id="cfg-mtn-holder" type="text" placeholder="الاسم الكامل" class="glass-input w-full px-3 py-2 rounded-xl text-sm" />
+            </div>
+          </div>
+
+          <!-- Bemo / ECash Config -->
+          <div class="glass-card rounded-2xl p-5 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-0.5 rounded text-xs font-extrabold bg-blue-600 text-white">BBSF / ECash</span>
+              <span class="text-xs font-bold text-slate-400">بنك بيمو / إي كاش</span>
+            </div>
+            <div>
+              <label for="cfg-bemo-acc" class="block text-xs font-bold text-slate-300 mb-1">رقم الحساب المصرفي أو بطاقة ECash</label>
+              <input id="cfg-bemo-acc" type="text" placeholder="أدخل رقم الحساب البنكي" class="glass-input w-full px-3 py-2 rounded-xl text-sm font-mono-num" />
+            </div>
+            <div>
+              <label for="cfg-bemo-holder" class="block text-xs font-bold text-slate-300 mb-1">اسم صاحب الحساب المصرفي</label>
+              <input id="cfg-bemo-holder" type="text" placeholder="الاسم الرسمي في البنك" class="glass-input w-full px-3 py-2 rounded-xl text-sm" />
+            </div>
+          </div>
+
+          <!-- Al-Haram Transfer Config -->
+          <div class="glass-card rounded-2xl p-5 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-0.5 rounded text-xs font-extrabold bg-amber-700 text-white">Al-Haram / Fouad</span>
+              <span class="text-xs font-bold text-slate-400">شركة الهرم / الفؤاد</span>
+            </div>
+            <div>
+              <label for="cfg-haram-name" class="block text-xs font-bold text-slate-300 mb-1">الاسم الثلاثي المعتمد لاستلام الحوالات</label>
+              <input id="cfg-haram-name" type="text" placeholder="الاسم الثلاثي كما في الهوية" class="glass-input w-full px-3 py-2 rounded-xl text-sm" />
+            </div>
+            <div>
+              <label for="cfg-haram-phone" class="block text-xs font-bold text-slate-300 mb-1">رقم الهاتف والفرع المعتمد</label>
+              <input id="cfg-haram-phone" type="text" placeholder="09XXXXXXXX - المحافظة/الفرع" class="glass-input w-full px-3 py-2 rounded-xl text-sm" />
+            </div>
+          </div>
+
+          <!-- USDT TRC20 Config -->
+          <div class="glass-card rounded-2xl p-5 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-0.5 rounded text-xs font-extrabold bg-teal-600 text-white">USDT TRC20</span>
+              <span class="text-xs font-bold text-slate-400">محفظة USDT الرقمية</span>
+            </div>
+            <div>
+              <label for="cfg-usdt-addr" class="block text-xs font-bold text-slate-300 mb-1">عنوان محفظة TRON (TRC20)</label>
+              <input id="cfg-usdt-addr" type="text" placeholder="T..." class="glass-input w-full px-3 py-2 rounded-xl text-sm font-mono-num" />
+            </div>
+          </div>
+
+          <div class="md:col-span-2 lg:col-span-3 flex justify-end pt-2">
+            <button type="submit" class="cursor-pointer btn-aurora font-extrabold text-sm px-8 py-3 rounded-2xl">
+              حفظ وتوثيق حسابات الدفع الخاصة بك
+            </button>
+          </div>
+        </form>
       </div>
     </section>
 
   </main>
 
-  <!-- ========================================================= -->
-  <!-- MODAL 1: CREATE / EDIT TASK MODAL                         -->
-  <!-- ========================================================= -->
-  <div id="task-modal" class="fixed inset-0 z-50 hidden bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4 no-print" role="dialog" aria-modal="true" aria-labelledby="task-modal-title">
-    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-xl w-full p-6 space-y-5 max-h-[90vh] overflow-y-auto">
-      <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
-        <h3 id="task-modal-title" class="text-lg font-extrabold text-slate-900 dark:text-white">إضافة مهمة جديدة إلى مساحة العمل</h3>
-        <button type="button" id="close-task-modal-btn" class="cursor-pointer p-1.5 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800" aria-label="إغلاق النافذة">
-          <svg class="w-5 h-5" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
+  <!-- ===================================================================== -->
+  <!-- MODAL 1: CREATE REAL TASK                                             -->
+  <!-- ===================================================================== -->
+  <div id="task-modal" class="fixed inset-0 z-50 hidden bg-slate-950/75 backdrop-blur-md flex items-center justify-center p-4 no-print" role="dialog" aria-modal="true" aria-labelledby="task-modal-title">
+    <div class="glass-panel rounded-3xl max-w-xl w-full p-6 space-y-5 max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-white/10 pb-3">
+        <h3 id="task-modal-title" class="text-lg font-black">إضافة مهمة حقيقية جديدة</h3>
+        <button type="button" id="close-task-modal-btn" class="cursor-pointer p-1.5 rounded-xl hover:bg-white/10 text-slate-400" aria-label="إغلاق">✕</button>
       </div>
 
       <form id="new-task-form" class="space-y-4">
         <div>
-          <label for="new-task-title" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">عنوان المهمة *</label>
-          <input id="new-task-title" type="text" required placeholder="مثال: تطوير واجهة الدفع عبر شام كاش" class="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800" />
+          <label for="new-task-title" class="block text-xs font-bold text-slate-300 mb-1">عنوان المهمة *</label>
+          <input id="new-task-title" type="text" required placeholder="أدخل عنوان المهمة الفعلية" class="glass-input w-full px-3.5 py-2.5 text-sm rounded-xl" />
         </div>
 
         <div>
-          <label for="new-task-desc" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">وصف المهمة والتفاصيل الفنية</label>
-          <textarea id="new-task-desc" rows="2" placeholder="اشرح المخرجات المطلوبة ومعايير القبول..." class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"></textarea>
+          <label for="new-task-desc" class="block text-xs font-bold text-slate-300 mb-1">تفاصيل ووصف المهمة</label>
+          <textarea id="new-task-desc" rows="2" placeholder="اكتب المتطلبات أو الملاحظات التنفيذية..." class="glass-input w-full px-3.5 py-2 text-sm rounded-xl"></textarea>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label for="new-task-project" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">المشروع المرتبط</label>
-            <select id="new-task-project" class="cursor-pointer w-full px-3 py-2.5 text-sm rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-semibold"></select>
+            <label for="new-task-project" class="block text-xs font-bold text-slate-300 mb-1">المشروع المرتبط</label>
+            <select id="new-task-project" class="glass-input cursor-pointer w-full px-3 py-2.5 text-sm rounded-xl font-semibold"></select>
           </div>
           <div>
-            <label for="new-task-gov" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">المحافظة السورية</label>
-            <select id="new-task-gov" class="cursor-pointer w-full px-3 py-2.5 text-sm rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-semibold">
+            <label for="new-task-gov" class="block text-xs font-bold text-slate-300 mb-1">المحافظة السورية</label>
+            <select id="new-task-gov" class="glass-input cursor-pointer w-full px-3 py-2.5 text-sm rounded-xl font-semibold">
               <option value="دمشق">دمشق</option>
               <option value="ريف دمشق">ريف دمشق</option>
               <option value="حلب">حلب</option>
@@ -793,100 +879,97 @@
               <option value="حماة">حماة</option>
               <option value="إدلب">إدلب</option>
               <option value="درعا">درعا</option>
+              <option value="السويداء">السويداء</option>
+              <option value="دير الزور">دير الزور</option>
+              <option value="الحسكة">الحسكة</option>
+              <option value="الرقة">الرقة</option>
             </select>
           </div>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>
-            <label for="new-task-assignee" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">المكلف بالمهمة</label>
-            <select id="new-task-assignee" class="cursor-pointer w-full px-3 py-2 text-sm rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-semibold"></select>
+            <label for="new-task-assignee" class="block text-xs font-bold text-slate-300 mb-1">المكلف بالمهمة</label>
+            <select id="new-task-assignee" class="glass-input cursor-pointer w-full px-3 py-2 text-sm rounded-xl font-semibold"></select>
           </div>
           <div>
-            <label for="new-task-priority" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">الأولوية</label>
-            <select id="new-task-priority" class="cursor-pointer w-full px-3 py-2 text-sm rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-semibold">
+            <label for="new-task-priority" class="block text-xs font-bold text-slate-300 mb-1">الأولوية</label>
+            <select id="new-task-priority" class="glass-input cursor-pointer w-full px-3 py-2 text-sm rounded-xl font-semibold">
               <option value="urgent">عاجل جداً</option>
-              <option value="high" selected>مرتفع</option>
-              <option value="medium">متوسط</option>
+              <option value="high">مرتفع</option>
+              <option value="medium" selected>متوسط</option>
               <option value="low">منخفض</option>
             </select>
           </div>
           <div>
-            <label for="new-task-due" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">تاريخ التسليم</label>
-            <input id="new-task-due" type="date" value="2026-10-08" class="w-full px-3 py-2 text-sm font-mono-num rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800" />
+            <label for="new-task-due" class="block text-xs font-bold text-slate-300 mb-1">تاريخ الاستحقاق</label>
+            <input id="new-task-due" type="date" class="glass-input w-full px-3 py-2 text-sm font-mono-num rounded-xl" />
           </div>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-teal-50/60 dark:bg-slate-800/70 p-3.5 rounded-xl border border-teal-200 dark:border-teal-800">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-950/50 p-3.5 rounded-2xl border border-white/10">
           <div>
-            <label for="new-task-bounty" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">مكافأة / ميزانية المهمة (ل.س SYP) *</label>
-            <input id="new-task-bounty" type="number" step="50000" min="50000" value="1500000" required class="w-full px-3 py-2 text-sm font-mono-num font-bold rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900" />
+            <label for="new-task-bounty" class="block text-xs font-bold text-slate-300 mb-1">مكافأة / تكلفة المهمة (ل.س SYP)</label>
+            <input id="new-task-bounty" type="number" min="0" step="any" value="0" class="glass-input w-full px-3 py-2 text-sm font-mono-num font-bold rounded-xl" />
           </div>
           <div>
-            <label for="new-task-paystatus" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">حالة التمويل والضمان</label>
-            <select id="new-task-paystatus" class="cursor-pointer w-full px-3 py-2 text-sm rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 font-semibold">
+            <label for="new-task-paystatus" class="block text-xs font-bold text-slate-300 mb-1">طريقة التمويل</label>
+            <select id="new-task-paystatus" class="glass-input cursor-pointer w-full px-3 py-2 text-sm rounded-xl font-semibold">
+              <option value="unpaid">الدفع عند التسليم</option>
               <option value="escrow">حجز المبلغ في الضمان (Escrow)</option>
-              <option value="unpaid">بانتظار الدفع عند التسليم</option>
             </select>
           </div>
         </div>
 
         <div>
-          <label for="new-task-subtasks" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">المهام الفرعية (افصل بينها بفاصلة ،)</label>
-          <input id="new-task-subtasks" type="text" placeholder="مثال: تحليل المتطلبات، برمجة الواجهة، اختبار الدفع" class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800" />
+          <label for="new-task-subtasks" class="block text-xs font-bold text-slate-300 mb-1">خطوات التنفيذ الفرعية (افصل بينها بفاصلة ،)</label>
+          <input id="new-task-subtasks" type="text" placeholder="خطوة 1، خطوة 2، خطوة 3..." class="glass-input w-full px-3.5 py-2 text-sm rounded-xl" />
         </div>
 
         <div class="flex items-center justify-end gap-2.5 pt-2">
-          <button type="button" id="cancel-task-modal-btn" class="cursor-pointer px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-sm font-bold">إلغاء</button>
-          <button type="submit" class="cursor-pointer px-5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-sm font-extrabold">حفظ وإضافة المهمة</button>
+          <button type="button" id="cancel-task-modal-btn" class="cursor-pointer px-4 py-2.5 rounded-xl glass-card text-sm font-bold">إلغاء</button>
+          <button type="submit" class="cursor-pointer px-6 py-2.5 rounded-xl btn-aurora text-sm font-extrabold">حفظ المهمة</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- ========================================================= -->
-  <!-- MODAL 2: OFFICIAL PRINTABLE SYRIAN E-PAYMENT RECEIPT      -->
-  <!-- ========================================================= -->
-  <div id="receipt-modal" class="fixed inset-0 z-50 hidden bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="receipt-modal-title">
-    <div id="printable-receipt" class="bg-white text-slate-900 border-2 border-teal-600 rounded-2xl max-w-lg w-full p-6 space-y-5 shadow-xl">
+  <!-- ===================================================================== -->
+  <!-- MODAL 2: OFFICIAL PRINTABLE RECEIPT                                   -->
+  <!-- ===================================================================== -->
+  <div id="receipt-modal" class="fixed inset-0 z-50 hidden bg-slate-950/75 backdrop-blur-md flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="receipt-modal-title">
+    <div id="printable-receipt" class="bg-white text-slate-900 border-2 border-teal-600 rounded-3xl max-w-lg w-full p-6 space-y-5 shadow-2xl">
       <div class="flex items-center justify-between border-b-2 border-teal-600/20 pb-4">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-teal-600 text-white flex items-center justify-center font-extrabold">
-            <svg class="w-6 h-6" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-          <div>
-            <h3 id="receipt-modal-title" class="text-base font-extrabold text-slate-900">إيصال دفع إلكتروني رسمي موثق</h3>
-            <p class="text-xs text-slate-500">منصة مَدار سوريا لإدارة المهام والمدفوعات الرقمية</p>
-          </div>
+        <div>
+          <h3 id="receipt-modal-title" class="text-base font-black text-slate-900">إيصال عملية مالية إلكترونية</h3>
+          <p id="receipt-ws-name" class="text-xs text-slate-500">منصة مَدار سوريا</p>
         </div>
-        <span id="receipt-id-badge" class="font-mono-num text-xs font-extrabold px-2.5 py-1 rounded-md bg-teal-50 text-teal-800 border border-teal-300">SY-PAY-2026</span>
+        <span id="receipt-id-badge" class="font-mono-num text-xs font-extrabold px-2.5 py-1 rounded-lg bg-teal-50 text-teal-800 border border-teal-300"></span>
       </div>
 
-      <div id="receipt-body-content" class="space-y-3 text-sm">
-        <!-- Populated dynamically -->
-      </div>
+      <div id="receipt-body-content" class="space-y-3 text-sm"></div>
 
       <div class="flex items-center justify-between gap-3 pt-4 border-t border-slate-200 no-print">
-        <button type="button" id="print-receipt-btn" class="cursor-pointer flex-1 py-2.5 px-4 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-sm flex items-center justify-center gap-2">
-          <svg class="w-4 h-4" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-          </svg>
-          <span>طباعة الإيصال / حفظ PDF</span>
+        <button type="button" id="print-receipt-btn" class="cursor-pointer flex-1 py-2.5 px-4 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-sm">
+          طباعة الإيصال / حفظ PDF
         </button>
-        <button type="button" id="close-receipt-modal-btn" class="cursor-pointer py-2.5 px-5 rounded-xl border border-slate-300 text-slate-700 font-bold text-sm hover:bg-slate-100">إغلاق</button>
+        <button type="button" id="close-receipt-modal-btn" class="cursor-pointer py-2.5 px-5 rounded-xl border border-slate-300 text-slate-700 font-bold text-sm hover:bg-slate-100">
+          إغلاق
+        </button>
       </div>
     </div>
   </div>
 
   <!-- Footer -->
-  <footer class="mt-auto border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-4 px-6 text-xs text-slate-500 dark:text-slate-400 no-print">
+  <footer class="relative z-10 mt-auto border-t border-white/10 glass-panel border-x-0 border-b-0 py-4 px-6 text-xs text-slate-400 no-print">
     <div class="max-w-[1440px] mx-auto flex flex-wrap items-center justify-between gap-3">
-      <div>مَدار سوريا (Madar Syria) © 2026 — مصمم وفق معايير <span class="font-bold text-teal-600 dark:text-teal-400">UI/UX Pro Max Design System</span></div>
+      <div>مَدار سوريا (Madar Syria) — تطبيق إنتاجي حقيقي بواجهات خلفية متحركة (Aurora & Interactive Canvas)</div>
       <div class="flex items-center gap-4">
-        <span>دمشق • حلب • حمص • اللاذقية • طرطوس • حماة</span>
-        <button type="button" id="reset-demo-btn" class="cursor-pointer text-teal-600 dark:text-teal-400 hover:underline font-semibold">إعادة ضبط البيانات التجريبية</button>
+        <label class="cursor-pointer text-teal-400 hover:underline font-bold">
+          استيراد نسخة احتياطية (JSON)
+          <input type="file" id="import-backup-input" accept=".json" class="hidden" />
+        </label>
+        <button type="button" id="clear-all-data-btn" class="cursor-pointer text-red-400 hover:underline font-semibold">تصفير ومسح جميع البيانات</button>
       </div>
     </div>
   </footer>
