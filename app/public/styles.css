@@ -1,0 +1,143 @@
+:root {
+  --color-primary: #0D9488;
+  --color-primary-hover: #0F766E;
+  --color-primary-light: #CCFBF1;
+  --color-secondary: #14B8A6;
+  --color-accent: #EA580C;
+  --color-accent-hover: #C2410C;
+  --color-gold: #D97706;
+  --color-background: #F4FBF9;
+  --color-surface: #FFFFFF;
+  --color-surface-muted: #ECF6F4;
+  --color-foreground: #0F2926;
+  --color-muted-foreground: #475569;
+  --color-border: #CBD5E1;
+  --color-border-teal: #99F6E4;
+  --color-ring: #0D9488;
+  --color-success: #059669;
+  --color-warning: #D97706;
+  --color-destructive: #DC2626;
+  --font-sans: 'Cairo', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+html.dark {
+  --color-primary: #14B8A6;
+  --color-primary-hover: #2DD4BF;
+  --color-primary-light: #113432;
+  --color-secondary: #0D9488;
+  --color-accent: #F97316;
+  --color-accent-hover: #FB923C;
+  --color-gold: #F59E0B;
+  --color-background: #0B131E;
+  --color-surface: #131F31;
+  --color-surface-muted: #1A2940;
+  --color-foreground: #F8FAFC;
+  --color-muted-foreground: #94A3B8;
+  --color-border: #263854;
+  --color-border-teal: #1E4E4A;
+  --color-ring: #14B8A6;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 180ms ease, color 180ms ease;
+}
+
+.font-mono-num {
+  font-family: var(--font-mono);
+  direction: ltr;
+  display: inline-block;
+}
+
+/* Damascus Subtle Geometric Header Banner Pattern */
+.damascus-pattern {
+  background-color: #0B4F4A;
+  background-image: radial-gradient(rgba(20, 184, 166, 0.16) 1.5px, transparent 1.5px),
+    radial-gradient(rgba(234, 88, 12, 0.12) 1.5px, #0B4F4A 1.5px);
+  background-size: 28px 28px;
+  background-position: 0 0, 14px 14px;
+}
+
+html.dark .damascus-pattern {
+  background-color: #092228;
+  background-image: radial-gradient(rgba(20, 184, 166, 0.14) 1.5px, transparent 1.5px),
+    radial-gradient(rgba(245, 158, 11, 0.1) 1.5px, #092228 1.5px);
+}
+
+/* Visible Focus States per UI/UX Pro Max Guidelines */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--color-ring);
+  outline-offset: 2px;
+}
+
+/* Interactive transitions */
+.interactive-card {
+  transition: transform 160ms ease, border-color 160ms ease, background-color 160ms ease;
+}
+
+.interactive-card:hover {
+  border-color: var(--color-primary);
+}
+
+/* Kanban column scrollbars */
+.kanban-col::-webkit-scrollbar {
+  width: 6px;
+}
+.kanban-col::-webkit-scrollbar-track {
+  background: transparent;
+}
+.kanban-col::-webkit-scrollbar-thumb {
+  background: rgba(13, 148, 136, 0.25);
+  border-radius: 9999px;
+}
+
+/* Respect Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Print styles for Official Payment Receipt */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #printable-receipt,
+  #printable-receipt * {
+    visibility: visible;
+  }
+  #printable-receipt {
+    position: fixed;
+    inset: 0;
+    background: #ffffff !important;
+    color: #000000 !important;
+    padding: 24px !important;
+    box-shadow: none !important;
+    border: 2px solid #0D9488 !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+}

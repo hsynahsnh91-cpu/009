@@ -1,0 +1,10 @@
+{
+  "name": "madar-syria-tasks",
+  "version": "1.0.0",
+  "description": "منصة مدار سوريا لإدارة المهام والمشاريع والدفع الإلكتروني",
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "dev": "node server.mjs"
+  }
+}
